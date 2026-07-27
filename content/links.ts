@@ -32,4 +32,9 @@ export const verifiedLinks: SocialLink[] = [
     url: ORG_URLS.facebook,
     description: "Updates and community announcements.",
   },
+  {
+    label: "Email",
+    url: ORG_URLS.email,
+    description: "Collaborations and inquiries.",
+  },
 ];

@@ -4,6 +4,7 @@ import {
   Camera,
   Music2,
   Users,
+  Mail,
   ArrowUpRight,
 } from "lucide-react";
 import { verifiedLinks } from "@/content/links";
@@ -14,6 +15,7 @@ const iconMap: Record<string, typeof Film> = {
   Instagram: Camera,
   TikTok: Music2,
   Facebook: Users,
+  Email: Mail,
 };
 
 export default function LinksPage() {

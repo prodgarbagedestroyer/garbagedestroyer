@@ -12,4 +12,5 @@ export const ORG_URLS = {
   instagram: "https://instagram.com/prod.garbagedestroyer",
   tiktok: "https://tiktok.com/@prodgarbagedestroyer",
   facebook: "https://www.facebook.com/profile.php?id=61591399319649",
+  email: "mailto:prodgarbagecollector@gmail.com",
 } as const;
