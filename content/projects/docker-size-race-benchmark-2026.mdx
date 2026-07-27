@@ -1,0 +1,31 @@
+---
+title: "docker-size-race-benchmark-2026"
+description: "Docker image size race: Node.js vs Python vs Go vs Rust — scratch vs Alpine container builds compared across compression strategies."
+tags: ["benchmark", "docker", "container", "nodejs", "python", "go", "rust"]
+date: "2026-06-20"
+repo: "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026"
+language: "Shell"
+featured: false
+status: "active"
+sortOrder: 6
+---
+
+## Overview
+
+Builds identical HTTP servers across four languages, comparing image sizes with different base strategies: scratch, Alpine, distroless, and slim variants.
+
+## Results (compressed size, MB)
+
+| Stack | Scratch | Alpine | Distroless |
+|---|---|---|---|
+| Rust (musl) | 8.4MB | 10.2MB | — |
+| Go | 6.1MB | 12.8MB | 8.3MB |
+| Node.js | — | 118MB | 92MB |
+| Python | — | 52MB | 46MB |
+
+## Usage
+
+```bash
+docker buildx build --platform linux/amd64 -f Dockerfile.scratch .
+docker images --format "{{.Size}}"
+```

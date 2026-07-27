@@ -53,7 +53,10 @@ const staticVideos: Video[] = [
     featured: true,
     isShort: false,
     platform: "youtube",
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
+    ],
   },
   {
     id: "zig-cli-rewrite",
@@ -91,11 +94,11 @@ const staticVideos: Video[] = [
     duration: "25:42",
     description:
       "Deploying Wasm modules to Cloudflare Workers, Fastly Compute, and a custom AOT runtime. Latency benchmarks and real-world viability assessment.",
-    relatedProjectSlugs: ["wasi-runtime-rs"],
+    relatedProjectSlugs: [],
     featured: false,
     isShort: false,
     platform: "youtube",
-    relatedRepoUrls: ["https://github.com/prodgarbagedestroyer/wasi-runtime-rs"],
+    relatedRepoUrls: [],
   },
   {
     id: "jit-compiler-rust",
@@ -105,11 +108,11 @@ const staticVideos: Video[] = [
     duration: "45:30",
     description:
       "From lexer to native code — implementing a simple JIT compiler using Cranelift. Covers IR generation, register allocation, and emitting x86-64 machine code.",
-    relatedProjectSlugs: ["jit-compiler-cranelift"],
+    relatedProjectSlugs: [],
     featured: true,
     isShort: false,
     platform: "youtube",
-    relatedRepoUrls: ["https://github.com/prodgarbagedestroyer/jit-compiler-cranelift"],
+    relatedRepoUrls: [],
   },
 ];
 

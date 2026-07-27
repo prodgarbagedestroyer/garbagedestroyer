@@ -1,0 +1,41 @@
+---
+title: "go-rust-node-rest-api-benchmark-2026"
+description: "Benchmark: Go, Rust, and Node.js REST API performance under realistic workloads — CRUD operations, pagination, and database queries."
+tags: ["benchmark", "go", "rust", "nodejs", "rest-api", "postgresql"]
+date: "2026-05-15"
+repo: "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026"
+language: "Shell"
+featured: true
+status: "active"
+sortOrder: 7
+---
+
+## Overview
+
+A realistic REST API benchmark implementing identical CRUD endpoints across Go, Rust, and Node.js. Each stack connects to PostgreSQL and handles pagination, filtering, and concurrent write operations.
+
+## Stack Configuration
+
+| Layer | Rust | Go | Node.js |
+|---|---|---|---|
+| Framework | Actix Web 4 | Chi v5 | Fastify 5 |
+| ORM | SQLx | GORM | Prisma |
+| DB | Postgres 16 | Postgres 16 | Postgres 16 |
+
+## Results (P99 latency, 500 concurrent)
+
+| Endpoint | Rust | Go | Node.js |
+|---|---|---|---|
+| GET /items | 2.1ms | 3.8ms | 12ms |
+| POST /items | 4.5ms | 6.2ms | 18ms |
+| GET /items?q=... | 3.2ms | 5.1ms | 15ms |
+| GET /items/:id | 1.8ms | 2.9ms | 8ms |
+
+## Usage
+
+```bash
+docker-compose up -d postgres
+cargo run --release  # Rust
+go run ./cmd/server  # Go
+npm run start        # Node.js
+```

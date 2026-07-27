@@ -1,0 +1,36 @@
+---
+title: "alpine-rust-vs-optimized-java-2026"
+description: "Head-to-head benchmark: stripped Alpine Rust microservice vs GraalVM Java 25 under high traffic stress. Compares cold start, throughput, and memory efficiency."
+tags: ["rust", "java", "graalvm", "benchmark", "microservices"]
+date: "2026-05-19"
+repo: "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026"
+language: "Rust"
+featured: true
+status: "active"
+sortOrder: 1
+---
+
+## Overview
+
+A controlled benchmark comparing two high-performance server stacks: a Rust microservice compiled for musl (Alpine) against a GraalVM native-image Java 25 service. Both serve identical REST payloads under matched container constraints.
+
+## Methodology
+
+- **Framework**: Actix Web 4 (Rust) vs Helidon SE 4 (Java)
+- **Container**: Alpine 3.20 (Rust) vs Distroless (Java native-image)
+- **Workload**: JSON serialization, parameterized route matching, health checks
+- **Metrics**: Cold start (ms), RPS at 1K/10K/100K connections, RSS memory
+
+## Key Findings
+
+- Rust cold starts in 3ms vs GraalVM's 18ms
+- Throughput converges above 10K connections
+- Rust RSS stays at 8MB vs GraalVM's 22MB
+- Alpine adds ~2MB vs scratch but enables TLS via OpenSSL
+
+## Usage
+
+```bash
+docker-compose up --build
+wrk -t12 -c400 -d30s http://localhost:8080/api/benchmark
+```

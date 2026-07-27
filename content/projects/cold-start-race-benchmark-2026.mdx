@@ -1,0 +1,39 @@
+---
+title: "cold-start-race-benchmark-2026"
+description: "Cold start race: Node.js vs Bun vs Go vs Rust — measuring time-to-first-byte from bare HTTP to production Docker containers."
+tags: ["benchmark", "cold-start", "docker", "nodejs", "bun", "go", "rust"]
+date: "2026-06-18"
+repo: "https://github.com/prodgarbagedestroyer/cold-start-race-benchmark-2026"
+language: "Shell"
+featured: true
+status: "active"
+sortOrder: 2
+---
+
+## Overview
+
+Measures the time from container start to first successful HTTP response across four runtimes. Each stack is containerized identically and tested on the same hardware.
+
+## Stacks Tested
+
+| Stack | Runtime | Framework | Container |
+|---|---|---|---|
+| Node.js | 23.x | Fastify | alpine |
+| Bun | 1.2.x | Bun.serve | alpine |
+| Go | 1.24 | net/http | scratch |
+| Rust | 1.85 | Actix Web | scratch |
+
+## Results (10-run average, ms)
+
+| Stack | Cold Start | Warm Start |
+|---|---|---|
+| Rust (scratch) | 3ms | &lt;1ms |
+| Go (scratch) | 8ms | &lt;1ms |
+| Bun (alpine) | 42ms | 8ms |
+| Node.js (alpine) | 210ms | 35ms |
+
+## Usage
+
+```bash
+./bench.sh --runs 20 --warmup 3
+```

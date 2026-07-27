@@ -1,6 +1,6 @@
 import { readCache, writeCache } from "./cache";
 
-const GITHUB_ORG = "prodgarbagedestroyer";
+const GITHUB_USER = "prodgarbagedestroyer";
 const CACHE_KEY = "github-repos";
 
 export interface GitHubRepo {
@@ -26,7 +26,7 @@ async function fetchOrgRepos(): Promise<GitHubRepo[] | null> {
 
   try {
     const res = await fetch(
-      `https://api.github.com/orgs/${GITHUB_ORG}/repos?type=public&sort=updated&per_page=100`,
+      `https://api.github.com/users/${GITHUB_USER}/repos?type=public&sort=updated&per_page=100`,
       { headers, next: { revalidate: 86400 } }
     );
     if (!res.ok) return null;

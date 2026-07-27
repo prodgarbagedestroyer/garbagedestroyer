@@ -1,0 +1,30 @@
+---
+title: "build-time-race-benchmark-2026"
+description: "Build time race: Node.js vs Python vs Go vs Rust — clean compile/build time comparison across package managers and toolchains."
+tags: ["benchmark", "build-time", "nodejs", "python", "go", "rust"]
+date: "2026-06-20"
+repo: "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026"
+language: "Shell"
+featured: false
+status: "active"
+sortOrder: 5
+---
+
+## Overview
+
+Measures clean build times for equivalent applications across four ecosystems. Tests both cold builds (no cache) and incremental builds to simulate real-world CI pipelines.
+
+## Results (cold build, seconds)
+
+| Stack | Toolchain | Cold | Incremental |
+|---|---|---|---|
+| Go | go build | 2.1s | 0.3s |
+| Rust | cargo build --release | 28.4s | 4.2s |
+| Node.js | npm install + tsc | 12.8s | 1.1s |
+| Python | pip install | 8.5s | 0.8s |
+
+## Usage
+
+```bash
+./bench.sh --clean --runs 5
+```

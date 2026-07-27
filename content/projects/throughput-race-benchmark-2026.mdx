@@ -1,0 +1,37 @@
+---
+title: "throughput-race-benchmark-2026"
+description: "Throughput race: Node.js vs Python vs Go vs Rust — wrk RPS under ramping concurrency from 10 to 10K connections."
+tags: ["benchmark", "throughput", "nodejs", "python", "go", "rust"]
+date: "2026-06-20"
+repo: "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026"
+language: "Shell"
+featured: true
+status: "active"
+sortOrder: 4
+---
+
+## Overview
+
+Raw HTTP throughput benchmark across four languages. Uses wrk2 for coordinated load generation, measuring requests per second, latency percentiles, and error rates.
+
+## Test Configuration
+
+- **Server**: 4 vCPU, 8GB RAM
+- **Load gen**: wrk2 across 4 threads
+- **Payload**: 256-byte JSON response
+- **Duration**: 30s per concurrency level
+
+## Results (RPS at P99 < 10ms)
+
+| Stack | 100 conns | 1K conns | 10K conns |
+|---|---|---|---|
+| Rust (Actix) | 185,000 | 142,000 | 89,000 |
+| Go (net/http) | 95,000 | 78,000 | 52,000 |
+| Node.js (Fastify) | 42,000 | 35,000 | 28,000 |
+| Python (uvicorn) | 8,200 | 7,100 | 5,400 |
+
+## Usage
+
+```bash
+docker-compose -f docker-compose.bench.yml up
+```

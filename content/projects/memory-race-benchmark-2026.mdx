@@ -1,0 +1,37 @@
+---
+title: "memory-race-benchmark-2026"
+description: "60-second memory footprint race: Node.js vs Python vs Go vs Rust under sustained load. Tracks RSS, heap, and GC behavior."
+tags: ["benchmark", "memory", "nodejs", "python", "go", "rust"]
+date: "2026-06-18"
+repo: "https://github.com/prodgarbagedestroyer/memory-race-benchmark-2026"
+language: "Shell"
+featured: false
+status: "active"
+sortOrder: 3
+---
+
+## Overview
+
+Four identical HTTP servers are placed under ramping load for 60 seconds while memory metrics are captured every second. Measures RSS, heap usage, GC pauses, and memory growth rate.
+
+## Methodology
+
+- **Load profile**: Ramp from 10 to 500 concurrent connections over 60s
+- **Metrics**: RSS via `/proc/[pid]/smaps`, heap via runtime APIs
+- **Runtimes**: Node.js (Fastify), Python (FastAPI/uvicorn), Go (net/http), Rust (Actix)
+
+## Results
+
+| Stack | RSS Start | RSS Peak | RSS Growth | GC Pauses |
+|---|---|---|---|---|
+| Rust | 6MB | 9MB | +3MB | None |
+| Go | 12MB | 34MB | +22MB | &lt;1ms avg |
+| Node.js | 45MB | 128MB | +83MB | 10ms avg |
+| Python | 38MB | 156MB | +118MB | N/A |
+
+## Usage
+
+```bash
+docker-compose up
+./bench.sh --duration 60 --ramp 10:500
+```
