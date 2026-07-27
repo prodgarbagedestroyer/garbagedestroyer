@@ -3,8 +3,8 @@ import { Play, ExternalLink } from "lucide-react";
 import { getAllVideos, getVideoUrl, getVideoThumbnail, getChannelUrl } from "@/content/videos";
 import { getProjectBySlug } from "@/lib/mdx";
 
-export default function VideosPage() {
-  const videos = getAllVideos();
+export default async function VideosPage() {
+  const videos = await getAllVideos();
 
   return (
     <div className="space-y-10">
@@ -44,7 +44,7 @@ export default function VideosPage() {
                 className="group relative aspect-video shrink-0 overflow-hidden sm:w-56"
               >
                 <img
-                  src={getVideoThumbnail(video.youtubeId)}
+                  src={getVideoThumbnail(video.youtubeId, video.thumbnail)}
                   alt={video.title}
                   className="h-full w-full object-cover"
                 />

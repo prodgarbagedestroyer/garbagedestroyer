@@ -1,5 +1,5 @@
 import { getProjectBySlug, getProjectSlugs } from "@/lib/mdx";
-import { getVideosByProject, getVideoUrl } from "@/content/videos";
+import { getVideosByProject, getVideoUrl, getVideoThumbnail } from "@/content/videos";
 import { notFound } from "next/navigation";
 import { compileMdx } from "@/lib/compile-mdx";
 import { ExternalLink, GitBranch, Play, ArrowLeft, Film } from "lucide-react";
@@ -24,7 +24,7 @@ export default async function ProjectPage({ params }: Props) {
   }
 
   const content = await compileMdx(project.raw);
-  const relatedVideos = getVideosByProject(slug);
+  const relatedVideos = await getVideosByProject(slug);
   const videoUrl = project.frontmatter.videoUrl
     ? project.frontmatter.videoUrl
     : project.frontmatter.videoId
@@ -135,7 +135,7 @@ export default async function ProjectPage({ params }: Props) {
               >
                 <div className="flex h-16 w-28 shrink-0 items-center justify-center overflow-hidden rounded border border-zinc-800">
                   <img
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                    src={getVideoThumbnail(video.youtubeId, video.thumbnail)}
                     alt={video.title}
                     className="h-full w-full object-cover"
                   />

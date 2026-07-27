@@ -1,4 +1,5 @@
 import { ORG_URLS } from "./site";
+import { fetchYouTubeVideos } from "@/lib/youtube";
 
 export interface Video {
   id: string;
@@ -9,21 +10,25 @@ export interface Video {
   description: string;
   relatedProjectSlugs: string[];
   featured: boolean;
+  thumbnail?: string;
 }
 
 export function getVideoUrl(youtubeId: string): string {
   return `https://youtube.com/watch?v=${youtubeId}`;
 }
 
-export function getVideoThumbnail(youtubeId: string): string {
-  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+export function getVideoThumbnail(
+  youtubeId: string,
+  customThumbnail?: string
+): string {
+  return customThumbnail ?? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
 }
 
 export function getChannelUrl(): string {
   return ORG_URLS.youtube;
 }
 
-export const videos: Video[] = [
+const staticVideos: Video[] = [
   {
     id: "rust-vs-go-http",
     title: "Rust vs Go: HTTP Throughput at 100K Connections",
@@ -81,16 +86,43 @@ export const videos: Video[] = [
   },
 ];
 
-export function getAllVideos(): Video[] {
-  return [...videos].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+async function loadMergedVideos(): Promise<Video[]> {
+  const live = await fetchYouTubeVideos();
+
+  if (!live?.length) {
+    return staticVideos;
+  }
+
+  return live.map((lv) => {
+    const match = staticVideos.find((sv) => sv.youtubeId === lv.youtubeId);
+    return {
+      id: lv.id,
+      title: lv.title,
+      youtubeId: lv.youtubeId,
+      date: lv.date,
+      duration: lv.duration || match?.duration || "",
+      description: lv.description || match?.description || "",
+      relatedProjectSlugs: match?.relatedProjectSlugs ?? [],
+      featured: match?.featured ?? false,
+      thumbnail: lv.thumbnail,
+    };
+  });
 }
 
-export function getFeaturedVideo(): Video | undefined {
-  return videos.find((v) => v.featured);
+let cachedVideos: Video[] | null = null;
+
+export async function getAllVideos(): Promise<Video[]> {
+  if (cachedVideos) return cachedVideos;
+  cachedVideos = await loadMergedVideos();
+  return cachedVideos;
 }
 
-export function getVideosByProject(slug: string): Video[] {
-  return videos.filter((v) => v.relatedProjectSlugs.includes(slug));
+export async function getFeaturedVideo(): Promise<Video | undefined> {
+  const all = await getAllVideos();
+  return all.find((v) => v.featured);
+}
+
+export async function getVideosByProject(slug: string): Promise<Video[]> {
+  const all = await getAllVideos();
+  return all.filter((v) => v.relatedProjectSlugs.includes(slug));
 }

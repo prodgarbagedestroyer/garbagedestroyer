@@ -1,10 +1,20 @@
 import { getAllProjects } from "@/lib/mdx";
-import { getVideosByProject } from "@/content/videos";
+import { getAllVideos } from "@/content/videos";
 import Link from "next/link";
 import { ExternalLink, Film, GitBranch } from "lucide-react";
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
   const projects = getAllProjects();
+  const allVideos = await getAllVideos();
+
+  const videosBySlug = new Map<string, typeof allVideos>();
+  for (const video of allVideos) {
+    for (const slug of video.relatedProjectSlugs) {
+      const list = videosBySlug.get(slug) ?? [];
+      list.push(video);
+      videosBySlug.set(slug, list);
+    }
+  }
 
   return (
     <div className="space-y-10">
@@ -28,7 +38,7 @@ export default function ProjectsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {projects.map((project) => {
-            const relatedVideos = getVideosByProject(project.slug);
+            const relatedVideos = videosBySlug.get(project.slug) ?? [];
 
             return (
               <Link

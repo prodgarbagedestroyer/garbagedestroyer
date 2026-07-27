@@ -5,8 +5,8 @@ import { getFeaturedProjects } from "@/lib/mdx";
 import { ORG_URLS } from "@/content/site";
 import { verifiedLinks } from "@/content/links";
 
-export default function IndexPage() {
-  const allVideos = getAllVideos();
+export default async function IndexPage() {
+  const allVideos = await getAllVideos();
   const latestVideo = allVideos[0];
   const featuredProjects = getFeaturedProjects().slice(0, 4);
 
@@ -65,7 +65,7 @@ export default function IndexPage() {
           <div className="flex flex-col sm:flex-row">
             <div className="relative aspect-video shrink-0 overflow-hidden sm:w-64">
               <img
-                src={getVideoThumbnail(latestVideo.youtubeId)}
+                src={getVideoThumbnail(latestVideo.youtubeId, latestVideo.thumbnail)}
                 alt={latestVideo.title}
                 className="h-full w-full object-cover"
               />
