@@ -6,23 +6,29 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "garbagedestroyer",
+  title: {
+    default: "garbagedestroyer",
+    template: "%s — garbagedestroyer",
+  },
   description:
-    "Developer portfolio, technical blog, and content hub — systems programming, benchmarking, and software commentary.",
+    "Benchmarks, systems experiments, and public builds from prod.garbagedestroyer. Watch the breakdown, then inspect the code.",
   metadataBase: new URL("https://garbagedestroyer.com"),
   openGraph: {
     title: "garbagedestroyer",
     description:
-      "Developer portfolio, technical blog, and content hub — systems programming, benchmarking, and software commentary.",
+      "Benchmarks, systems experiments, and public builds. YouTube deep-dives paired with open-source repos.",
     type: "website",
+    siteName: "garbagedestroyer",
   },
 };
 
@@ -36,13 +42,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
-      <body className="h-full bg-zinc-950 text-zinc-100 antialiased">
-        <div className="flex h-full">
-          <Nav />
-          <main className="ml-56 flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl px-8 py-12">{children}</div>
-          </main>
-        </div>
+      <body className="min-h-full bg-zinc-950 text-zinc-100 antialiased">
+        <Nav />
+        <main className="md:ml-56 min-h-screen overflow-y-auto">
+          <div className="mx-auto max-w-4xl px-4 py-10 md:px-8 md:py-12">
+            {children}
+          </div>
+        </main>
       </body>
     </html>
   );

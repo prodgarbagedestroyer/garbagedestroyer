@@ -1,115 +1,204 @@
-import { Film, GitBranch } from "lucide-react";
-
-interface ActivityItem {
-  date: string;
-  type: "video" | "repo";
-  title: string;
-  description: string;
-  link: string;
-}
-
-const feed: ActivityItem[] = [
-  {
-    date: "2026-07-25",
-    type: "video",
-    title: "Rust vs Go: HTTP Throughput at 100K Connections",
-    description:
-      "Benchmarking raw HTTP server throughput — comparing async Rust (Tokio) against Go goroutines under heavy load.",
-    link: "https://youtube.com/@prod.garbagedestroyer",
-  },
-  {
-    date: "2026-07-20",
-    type: "repo",
-    title: "wasi-runtime-rs",
-    description:
-      "Pushed to main — A minimal WebAssembly System Interface runtime written in Rust. Supports WASI preview2 with component model.",
-    link: "https://github.com/prodgarbagedestroyer/wasi-runtime-rs",
-  },
-  {
-    date: "2026-07-15",
-    type: "video",
-    title: "I Rewrote My CLI in Zig (and Regretted It)",
-    description:
-      "A candid walkthrough of porting a 3K-line Rust CLI tool to Zig — what worked, what broke, and where each language shines.",
-    link: "https://youtube.com/@prod.garbagedestroyer",
-  },
-  {
-    date: "2026-07-10",
-    type: "repo",
-    title: "svelte-canvas-engine",
-    description:
-      "New release v0.4.0 — A high-performance 2D canvas rendering engine for Svelte 5, powered by WebGL with automatic batched draw calls.",
-    link: "https://github.com/prodgarbagedestroyer/svelte-canvas-engine",
-  },
-  {
-    date: "2026-07-05",
-    type: "video",
-    title: "Bun vs Deno vs Node: The 2026 Server-Side Runtime Showdown",
-    description:
-      "Cold starts, throughput, memory, and DX — a comprehensive look at where each runtime stands in mid-2026.",
-    link: "https://youtube.com/@prod.garbagedestroyer",
-  },
-];
+import { Film, GitBranch, ExternalLink, ArrowRight, Play } from "lucide-react";
+import Link from "next/link";
+import { getAllVideos, getVideoUrl, getVideoThumbnail, getChannelUrl } from "@/content/videos";
+import { getFeaturedProjects } from "@/lib/mdx";
+import { ORG_URLS } from "@/content/site";
+import { verifiedLinks } from "@/content/links";
 
 export default function IndexPage() {
-  return (
-    <div className="space-y-12">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-100">
-          garbagedestroyer
-        </h1>
-        <p className="max-w-xl leading-relaxed text-zinc-400">
-          Systems programming, software benchmarking, and technical commentary.
-          Exploring Rust, Go, WebAssembly, and the tools that shape how we build.
-        </p>
-      </header>
+  const allVideos = getAllVideos();
+  const latestVideo = allVideos[0];
+  const featuredProjects = getFeaturedProjects().slice(0, 4);
 
+  return (
+    <div className="space-y-14">
       <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-mono text-xs uppercase tracking-wider text-zinc-500">
-            Activity Feed
-          </h2>
-          <span className="font-mono text-[11px] text-zinc-600">Chronological</span>
+        <div className="space-y-3">
+          <h1 className="text-3xl font-bold tracking-tight text-zinc-100 md:text-4xl">
+            garbagedestroyer
+          </h1>
+          <p className="max-w-xl text-base leading-relaxed text-zinc-400">
+            Benchmarks, systems experiments, and public builds. Watch the
+            breakdown, then inspect the code.
+          </p>
         </div>
 
+        <div className="flex flex-wrap gap-3">
+          <a
+            href={getChannelUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-md bg-zinc-100 px-5 py-2.5 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-300"
+          >
+            <Play className="h-4 w-4" fill="currentColor" />
+            Watch on YouTube
+          </a>
+          <Link
+            href="/projects"
+            className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+          >
+            View Projects
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+          <a
+            href={ORG_URLS.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 px-5 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:border-zinc-700 hover:text-zinc-200"
+          >
+            <GitBranch className="h-4 w-4" />
+            GitHub Org
+          </a>
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-mono text-xs uppercase tracking-wider text-zinc-500">
+          Latest Video
+        </h2>
+        <a
+          href={getVideoUrl(latestVideo.youtubeId)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 transition-colors hover:border-zinc-700"
+        >
+          <div className="flex flex-col sm:flex-row">
+            <div className="relative aspect-video shrink-0 overflow-hidden sm:w-64">
+              <img
+                src={getVideoThumbnail(latestVideo.youtubeId)}
+                alt={latestVideo.title}
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300">
+                {latestVideo.duration}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
+                <Play className="h-10 w-10 text-zinc-100" fill="currentColor" />
+              </div>
+            </div>
+            <div className="flex flex-1 flex-col justify-between p-5">
+              <div className="space-y-1.5">
+                <h3 className="text-base font-semibold text-zinc-100 group-hover:text-zinc-50 transition-colors">
+                  {latestVideo.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-zinc-400 line-clamp-2">
+                  {latestVideo.description}
+                </p>
+              </div>
+              <div className="mt-3 flex items-center gap-3 font-mono text-xs text-zinc-500">
+                <time>{latestVideo.date}</time>
+                <span className="text-zinc-700">|</span>
+                <span>{latestVideo.duration}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      {featuredProjects.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-mono text-xs uppercase tracking-wider text-zinc-500">
+              Featured Projects
+            </h2>
+            <Link
+              href="/projects"
+              className="font-mono text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+            >
+              All projects →
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {featuredProjects.map((project) => (
+              <Link
+                key={project.slug}
+                href={`/projects/${project.slug}`}
+                className="group flex flex-col rounded-lg border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-zinc-700 hover:bg-zinc-900/80"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="rounded border border-zinc-700 px-1.5 py-0 font-mono text-[10px] uppercase text-zinc-500">
+                    {project.frontmatter.language}
+                  </span>
+                  {project.frontmatter.status === "experimental" && (
+                    <span className="rounded bg-zinc-800 px-1.5 py-0 font-mono text-[10px] uppercase text-zinc-600">
+                      experimental
+                    </span>
+                  )}
+                </div>
+                <h3 className="mb-1 text-sm font-semibold text-zinc-200 group-hover:text-zinc-100 transition-colors">
+                  {project.frontmatter.title}
+                </h3>
+                <p className="mb-3 text-sm leading-relaxed text-zinc-500 line-clamp-2">
+                  {project.frontmatter.description}
+                </p>
+                <div className="mt-auto flex items-center gap-3">
+                  {project.frontmatter.repo && (
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] text-zinc-500">
+                      <GitBranch className="h-3 w-3" />
+                      repo
+                    </span>
+                  )}
+                  {project.frontmatter.videoId && (
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] text-zinc-500">
+                      <Film className="h-3 w-3" />
+                      watch
+                    </span>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="space-y-4 border-t border-zinc-800 pt-10">
+        <h2 className="font-mono text-xs uppercase tracking-wider text-zinc-500">
+          Recent Activity
+        </h2>
         <div className="relative ml-3 space-y-0 border-l border-zinc-800">
-          {feed.map((item) => (
-            <TimelineItem key={`${item.date}-${item.title}`} item={item} />
+          {allVideos.slice(1, 5).map((video) => (
+            <div key={video.id} className="relative pb-8 last:pb-0">
+              <div className="absolute -left-[13px] top-0 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
+                <Film className="h-3 w-3 text-zinc-400" />
+              </div>
+              <div className="ml-7 space-y-1">
+                <time className="font-mono text-xs text-zinc-600">{video.date}</time>
+                <a
+                  href={getVideoUrl(video.youtubeId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm font-medium text-zinc-300 transition-colors hover:text-zinc-100"
+                >
+                  {video.title}
+                </a>
+              </div>
+            </div>
           ))}
         </div>
       </section>
-    </div>
-  );
-}
 
-function TimelineItem({ item }: { item: ActivityItem }) {
-  const Icon = item.type === "video" ? Film : GitBranch;
-
-  return (
-    <div className="relative pb-10 last:pb-0">
-      <div className="absolute -left-[13px] top-0 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
-        <Icon className="h-3 w-3 text-zinc-400" />
-      </div>
-
-      <div className="ml-7 space-y-1">
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] uppercase text-zinc-500">
-            {item.type}
-          </span>
-          <time className="font-mono text-xs text-zinc-600">{item.date}</time>
+      <section className="border-t border-zinc-800 pt-10">
+        <div className="flex flex-wrap items-center gap-4">
+          {verifiedLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+            >
+              {link.label}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          ))}
+          <Link
+            href="/links"
+            className="font-mono text-xs text-zinc-600 transition-colors hover:text-zinc-400"
+          >
+            More links →
+          </Link>
         </div>
-        <a
-          href={item.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block text-sm font-medium text-zinc-200 transition-colors hover:text-zinc-100"
-        >
-          {item.title}
-        </a>
-        <p className="text-sm leading-relaxed text-zinc-400">
-          {item.description}
-        </p>
-      </div>
+      </section>
     </div>
   );
 }

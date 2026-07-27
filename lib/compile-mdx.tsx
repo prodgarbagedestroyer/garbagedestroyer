@@ -1,4 +1,3 @@
-import { compile } from "@mdx-js/mdx";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 

@@ -1,22 +1,9 @@
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import matter from "gray-matter";
+import type { Project, ProjectFrontmatter, ProjectStatus } from "./types";
 
-export interface ProjectFrontmatter {
-  title: string;
-  description: string;
-  tags: string[];
-  date: string;
-  repo?: string;
-  demo?: string;
-  language: string;
-}
-
-export interface Project {
-  slug: string;
-  frontmatter: ProjectFrontmatter;
-  raw: string;
-}
+export type { Project, ProjectFrontmatter, ProjectStatus };
 
 const PROJECTS_DIR = join(process.cwd(), "content/projects");
 
@@ -51,6 +38,14 @@ export function getProjectBySlug(slug: string): Project | null {
         repo: data.repo,
         demo: data.demo,
         language: data.language ?? "Unknown",
+        featured: data.featured ?? false,
+        status: data.status ?? "active",
+        org: data.org ?? "prodgarbagedestroyer",
+        videoId: data.videoId,
+        videoUrl: data.videoUrl,
+        sortOrder: data.sortOrder,
+        coverImage: data.coverImage,
+        homepage: data.homepage,
       },
       raw: content,
     };
@@ -66,8 +61,15 @@ export function getAllProjects(): Project[] {
     .filter((p): p is Project => p !== null);
 
   return projects.sort((a, b) => {
+    if (a.frontmatter.sortOrder !== undefined && b.frontmatter.sortOrder !== undefined) {
+      return a.frontmatter.sortOrder - b.frontmatter.sortOrder;
+    }
     const dateA = new Date(a.frontmatter.date).getTime();
     const dateB = new Date(b.frontmatter.date).getTime();
     return dateB - dateA;
   });
+}
+
+export function getFeaturedProjects(): Project[] {
+  return getAllProjects().filter((p) => p.frontmatter.featured);
 }
