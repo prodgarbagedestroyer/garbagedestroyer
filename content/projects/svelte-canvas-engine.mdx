@@ -1,0 +1,47 @@
+---
+title: "svelte-canvas-engine"
+description: "A high-performance 2D canvas rendering engine for Svelte 5, powered by WebGL with automatic batched draw calls and reactive scene graph."
+tags: ["svelte", "webgl", "graphics", "typescript"]
+date: "2026-07-10"
+repo: "https://github.com/prodgarbagedestroyer/svelte-canvas-engine"
+demo: "https://svelte-canvas-engine.vercel.app"
+language: "Svelte"
+---
+
+## Overview
+
+`svelte-canvas-engine` brings immediate-mode style rendering to Svelte 5 applications using WebGL under the hood. It automatically batches draw calls, manages a persistent scene graph, and integrates with Svelte's `$state` runes for fine-grained reactivity.
+
+## Design Decisions
+
+Traditional canvas APIs require manual state management and imperative draw calls. This engine wraps those in a declarative Svelte API:
+
+```svelte
+<script>
+  import { Canvas, Rectangle, Circle, Text } from 'svelte-canvas-engine';
+
+  let x = $state(100);
+  let color = $state('#3b82f6');
+</script>
+
+<Canvas {width} {height}>
+  <Rectangle {x} y={50} width={200} height={120} {color} />
+  <Circle x={x + 100} y={200} radius={40} fill="#ef4444" />
+  <Text x={10} y={30} content="Hello, Canvas!" font="16px Geist Mono" />
+</Canvas>
+```
+
+## Performance
+
+- 10,000 rectangles with randomized positions and colors: **stable 60fps**
+- Batching reduces WebGL draw calls from O(n) to O(1) per frame
+- Dirty flag tracking skips re-uploading static geometry
+
+## Implementation
+
+The engine lifecycle:
+
+1. **Compile phase** — Parse the Svelte component tree, extract drawable primitives
+2. **Upload phase** — Send static geometry to GPU buffers (one-time)
+3. **Render phase** — Each frame, merge all transforms into a single uniform buffer, issue one batched draw call
+4. **React phase** — Svelte's `$effect` roots watch for state changes and mark buffers dirty
