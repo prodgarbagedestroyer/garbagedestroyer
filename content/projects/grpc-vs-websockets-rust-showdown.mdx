@@ -1,0 +1,28 @@
+---
+title: "grpc-vs-websockets-rust-showdown"
+description: "gRPC vs WebSockets in Rust: latency, throughput, and connection overhead comparison for real-time services."
+tags: ["rust", "grpc", "websockets", "benchmark", "realtime"]
+date: "2026-05-20"
+repo: "https://github.com/prod-garbage-destroyer/grpc-vs-websockets-rust-showdown"
+language: "JavaScript"
+featured: false
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 11
+---
+
+## Overview
+
+Benchmarks gRPC streaming vs WebSocket connections for real-time data pipelines in Rust. Tests message throughput, connection overhead, and tail latency under varying payload sizes.
+
+## Results (10K messages, 256B payload)
+
+| Protocol | RPS | p99 latency | Connections |
+|---|---|---|---|
+| gRPC unary | 45K | 3.2ms | 1 per call |
+| gRPC streaming | 210K | 1.8ms | 1 persistent |
+| WebSocket | 180K | 2.1ms | 1 persistent |
+
+## Key Insight
+
+gRPC streaming wins on throughput due to HTTP/2 multiplexing, but WebSockets are simpler to implement and debug. For browser clients, WebSockets remain the pragmatic choice.

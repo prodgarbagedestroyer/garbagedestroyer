@@ -1,0 +1,33 @@
+---
+title: "rust-go-dotnet-microservice-2026"
+description: "Benchmark comparison of Rust (Axum), Go (Fiber), and ASP.NET (Minimal API) as microservice backends — p95 latency, throughput, and resource usage."
+tags: ["rust", "go", "dotnet", "benchmark", "microservices"]
+date: "2026-07-20"
+repo: "https://github.com/prod-garbage-destroyer/rust-go-dotnet-microservice-2026"
+language: "Rust"
+featured: true
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 8
+---
+
+## Overview
+
+Three identical REST APIs built in Rust (Axum), Go (Fiber), and .NET (Minimal API), benchmarked under identical conditions. Measures p95 latency, requests per second, and container memory footprint.
+
+## Stacks
+
+| Stack | Framework | Runtime |
+|---|---|---|
+| Rust | Axum 0.8 | tokio |
+| Go | Fiber 3 | Go 1.24 |
+| .NET | Minimal API | .NET 10 |
+
+## Results (500 concurrent, 30s)
+
+| Metric | Rust | Go | .NET |
+|---|---|---|---|
+| RPS | 142K | 78K | 62K |
+| p95 latency | 2.1ms | 4.5ms | 6.8ms |
+| RSS memory | 8MB | 34MB | 52MB |
+| Cold start | 3ms | 8ms | 120ms |

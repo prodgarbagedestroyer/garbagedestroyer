@@ -1,0 +1,30 @@
+---
+title: "cold-start-tax-experiment"
+description: "Cold Start Tax: Go vs Quarkus Native vs Node.js benchmark experiment. Measures time-to-first-byte across compiled and interpreted runtimes."
+tags: ["go", "quarkus", "nodejs", "benchmark", "cold-start"]
+date: "2026-06-15"
+repo: "https://github.com/prod-garbage-destroyer/cold-start-tax-experiment"
+language: "Go"
+featured: true
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 9
+---
+
+## Overview
+
+Quantifies the "cold start tax" — the performance penalty paid on first request after deployment. Compares compiled native images (Go, Quarkus Native) against interpreted runtimes (Node.js).
+
+## Methodology
+
+- **Server**: 2 vCPU, 4GB RAM
+- **Workload**: JSON echo endpoint, 100 warmup requests + 1000 measured
+- **Cold definition**: Container restart between each test run
+
+## Results
+
+| Runtime | Cold start | p99 cold | p99 warm |
+|---|---|---|---|
+| Go (net/http) | 8ms | 12ms | 0.5ms |
+| Quarkus Native | 18ms | 24ms | 0.8ms |
+| Node.js (Fastify) | 210ms | 350ms | 3ms |

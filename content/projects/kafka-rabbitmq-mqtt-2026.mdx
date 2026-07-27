@@ -1,0 +1,30 @@
+---
+title: "kafka-rabbitmq-mqtt-2026"
+description: "Kafka vs RabbitMQ vs MQTT: message throughput and latency benchmark for event-driven architectures."
+tags: ["kafka", "rabbitmq", "mqtt", "benchmark", "messaging"]
+date: "2026-05-10"
+repo: "https://github.com/prod-garbage-destroyer/kafka-rabbitmq-mqtt-2026"
+language: "Python"
+featured: false
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 12
+---
+
+## Overview
+
+Compares three messaging patterns under identical workloads: persistent logs (Kafka), queue-based routing (RabbitMQ), and lightweight pub/sub (MQTT).
+
+## Test Configuration
+
+- **Brokers**: Kafka 3.9, RabbitMQ 4.0, Mosquitto 2.0
+- **Workload**: 100K messages, 1KB payload, 3 consumers
+- **Metrics**: throughput, end-to-end latency, broker CPU/memory
+
+## Results (1KB messages, 3 consumers)
+
+| Broker | Msg/s | p99 latency | Broker RSS |
+|---|---|---|---|
+| Kafka | 850K | 2ms | 1.2GB |
+| RabbitMQ | 120K | 8ms | 280MB |
+| MQTT | 45K | 15ms | 45MB |

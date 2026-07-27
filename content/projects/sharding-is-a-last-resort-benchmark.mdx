@@ -1,0 +1,32 @@
+---
+title: "sharding-is-a-last-resort-benchmark"
+description: "Benchmark harness for manual PostgreSQL sharding vs CockroachDB and TiDB — when to shard and when to use distributed SQL."
+tags: ["go", "postgresql", "cockroachdb", "tidb", "benchmark", "database"]
+date: "2026-06-10"
+repo: "https://github.com/prod-garbage-destroyer/sharding-is-a-last-resort-benchmark"
+language: "Go"
+featured: true
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 10
+---
+
+## Overview
+
+Compares manual PostgreSQL sharding against distributed SQL databases (CockroachDB, TiDB) to answer: at what scale does sharding become necessary, and is it worth the complexity?
+
+## Configurations
+
+| Setup | Description |
+|---|---|
+| Single PG | PostgreSQL 16, unsharded |
+| Sharded PG | 3-node manual sharding with pg_partman |
+| CockroachDB | 3-node cluster, default replication |
+| TiDB | 3-node TiKV + 1 TiFlash |
+
+## Key Findings
+
+- Single PG handles 5K writes/s comfortably
+- Sharding breaks even at ~20K writes/s
+- CockroachDB wins on horizontal scaling simplicity
+- TiDB wins on analytical queries alongside OLTP

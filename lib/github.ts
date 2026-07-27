@@ -1,6 +1,10 @@
 import { readCache, writeCache } from "./cache";
 
 const GITHUB_USER = "prodgarbagedestroyer";
+const SOURCES = [
+  { type: "user" as const, name: "prodgarbagedestroyer" },
+  { type: "org" as const, name: "prod-garbage-destroyer" },
+];
 const CACHE_KEY = "github-repos";
 
 export interface GitHubRepo {
@@ -16,7 +20,10 @@ export interface GitHubRepo {
   topics: string[];
 }
 
-async function fetchOrgRepos(): Promise<GitHubRepo[] | null> {
+async function fetchRepos(
+  type: "user" | "org",
+  name: string
+): Promise<GitHubRepo[] | null> {
   const token = process.env.GITHUB_TOKEN;
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
@@ -26,13 +33,13 @@ async function fetchOrgRepos(): Promise<GitHubRepo[] | null> {
 
   try {
     const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USER}/repos?type=public&sort=updated&per_page=100`,
+      `https://api.github.com/${type === "org" ? "orgs" : "users"}/${name}/repos?type=public&sort=updated&per_page=100`,
       { headers, next: { revalidate: 86400 } }
     );
-    if (!res.ok) return null;
+    if (!res.ok) return [];
 
     const repos = await res.json();
-    if (!Array.isArray(repos)) return null;
+    if (!Array.isArray(repos)) return [];
 
     return repos.map(
       (r: {
@@ -60,8 +67,31 @@ async function fetchOrgRepos(): Promise<GitHubRepo[] | null> {
       })
     );
   } catch {
-    return null;
+    return [];
   }
+}
+
+async function fetchAllRepos(): Promise<GitHubRepo[] | null> {
+  const results = await Promise.all(
+    SOURCES.map((s) => fetchRepos(s.type, s.name))
+  );
+
+  const merged = results.flat().filter(Boolean) as GitHubRepo[];
+
+  if (merged.length === 0) return null;
+
+  const seen = new Set<string>();
+  const deduped = merged.filter((r) => {
+    if (seen.has(r.name)) return false;
+    seen.add(r.name);
+    return true;
+  });
+
+  deduped.sort(
+    (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+
+  return deduped;
 }
 
 let cachedRepos: GitHubRepo[] | null = null;
@@ -69,7 +99,7 @@ let cachedRepos: GitHubRepo[] | null = null;
 export async function getOrgRepos(): Promise<GitHubRepo[]> {
   if (cachedRepos) return cachedRepos;
 
-  const live = await fetchOrgRepos();
+  const live = await fetchAllRepos();
   if (live !== null) {
     writeCache(CACHE_KEY, live);
     cachedRepos = live;
