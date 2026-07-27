@@ -1,5 +1,8 @@
 import { ORG_URLS } from "./site";
 import { fetchYouTubeVideos } from "@/lib/youtube";
+import { getAllExternalShorts, type ExternalShort } from "./external-shorts";
+
+export type VideoPlatform = "youtube" | "tiktok" | "instagram";
 
 export interface Video {
   id: string;
@@ -12,10 +15,17 @@ export interface Video {
   featured: boolean;
   thumbnail?: string;
   isShort: boolean;
+  platform: VideoPlatform;
+  externalUrl?: string;
 }
 
 export function getVideoUrl(youtubeId: string): string {
   return `https://youtube.com/watch?v=${youtubeId}`;
+}
+
+export function getVideoLink(video: Video): string {
+  if (video.externalUrl) return video.externalUrl;
+  return getVideoUrl(video.youtubeId);
 }
 
 export function getVideoThumbnail(
@@ -41,6 +51,7 @@ const staticVideos: Video[] = [
     relatedProjectSlugs: [],
     featured: true,
     isShort: false,
+    platform: "youtube",
   },
   {
     id: "zig-cli-rewrite",
@@ -53,6 +64,7 @@ const staticVideos: Video[] = [
     relatedProjectSlugs: [],
     featured: false,
     isShort: false,
+    platform: "youtube",
   },
   {
     id: "runtime-showdown-2026",
@@ -65,6 +77,7 @@ const staticVideos: Video[] = [
     relatedProjectSlugs: [],
     featured: true,
     isShort: false,
+    platform: "youtube",
   },
   {
     id: "wasm-on-the-edge",
@@ -77,6 +90,7 @@ const staticVideos: Video[] = [
     relatedProjectSlugs: ["wasi-runtime-rs"],
     featured: false,
     isShort: false,
+    platform: "youtube",
   },
   {
     id: "jit-compiler-rust",
@@ -89,6 +103,7 @@ const staticVideos: Video[] = [
     relatedProjectSlugs: ["jit-compiler-cranelift"],
     featured: true,
     isShort: false,
+    platform: "youtube",
   },
 ];
 
@@ -112,6 +127,7 @@ async function loadMergedVideos(): Promise<Video[]> {
       featured: match?.featured ?? false,
       thumbnail: lv.thumbnail,
       isShort: lv.isShort,
+      platform: "youtube" as VideoPlatform,
     };
   });
 }
@@ -135,12 +151,34 @@ export async function getVideos({
 } = {}): Promise<{ videos: Video[]; total: number; pages: number }> {
   const all = await getAllVideos();
 
-  const filtered =
-    type === "video"
-      ? all.filter((v) => !v.isShort)
-      : type === "short"
-        ? all.filter((v) => v.isShort)
-        : all;
+  let filtered: Video[];
+
+  if (type === "video") {
+    filtered = all.filter((v) => !v.isShort);
+  } else if (type === "short") {
+    const ytShorts = all.filter((v) => v.isShort);
+    const external = getAllExternalShorts().map(
+      (es): Video => ({
+        id: es.id,
+        title: es.title,
+        youtubeId: "",
+        date: es.date,
+        duration: "",
+        description: es.description,
+        relatedProjectSlugs: [],
+        featured: false,
+        thumbnail: es.thumbnail,
+        isShort: true,
+        platform: es.platform,
+        externalUrl: es.url,
+      })
+    );
+    filtered = [...ytShorts, ...external].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  } else {
+    filtered = all;
+  }
 
   const total = filtered.length;
   const pages = Math.max(1, Math.ceil(total / perPage));
@@ -162,7 +200,7 @@ export async function getVideosByProject(slug: string): Promise<Video[]> {
 }
 
 export function getShortsCount(videos: Video[]): number {
-  return videos.filter((v) => v.isShort).length;
+  return videos.filter((v) => v.isShort).length + getAllExternalShorts().length;
 }
 
 export function getVideosCount(videos: Video[]): number {

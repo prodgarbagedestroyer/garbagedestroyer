@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { Play, ExternalLink } from "lucide-react";
+import { Play, ExternalLink, Music2, Camera } from "lucide-react";
 import {
   getAllVideos,
   getVideos,
-  getVideoUrl,
+  getVideoLink,
   getVideoThumbnail,
   getChannelUrl,
   getShortsCount,
@@ -87,6 +87,11 @@ export default async function VideosPage({ searchParams }: Props) {
             const relatedProjects = video.relatedProjectSlugs
               .map((slug) => getProjectBySlug(slug))
               .filter(Boolean);
+            const isExternal = video.platform !== "youtube";
+            const videoHref = getVideoLink(video);
+            const thumbnailSrc = isExternal
+              ? video.thumbnail
+              : getVideoThumbnail(video.youtubeId, video.thumbnail);
 
             return (
               <div
@@ -94,36 +99,73 @@ export default async function VideosPage({ searchParams }: Props) {
                 className="flex flex-col overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 transition-colors hover:border-zinc-700 sm:flex-row"
               >
                 <a
-                  href={getVideoUrl(video.youtubeId)}
+                  href={videoHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group relative aspect-video shrink-0 overflow-hidden sm:w-56"
                 >
-                  <img
-                    src={getVideoThumbnail(
-                      video.youtubeId,
-                      video.thumbnail
-                    )}
-                    alt={video.title}
-                    className="h-full w-full object-cover"
-                  />
-                  {video.isShort && (
-                    <div className="absolute left-2 top-2 rounded bg-purple-900/80 px-1.5 py-0 font-mono text-[10px] text-purple-300">
-                      SHORT
+                  {thumbnailSrc ? (
+                    <img
+                      src={thumbnailSrc}
+                      alt={video.title}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
+                      {video.platform === "tiktok" ? (
+                        <Music2 className="h-8 w-8 text-zinc-600" />
+                      ) : video.platform === "instagram" ? (
+                        <Camera className="h-8 w-8 text-zinc-600" />
+                      ) : (
+                        <Play className="h-8 w-8 text-zinc-600" />
+                      )}
                     </div>
                   )}
-                  <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300">
-                    {video.duration}
+                  <div
+                    className="absolute left-2 top-2 rounded px-1.5 py-0 font-mono text-[10px] uppercase"
+                    style={{
+                      background:
+                        video.platform === "tiktok"
+                          ? "rgba(225,29,72,0.8)"
+                          : video.platform === "instagram"
+                          ? "rgba(180,83,9,0.8)"
+                          : video.isShort
+                          ? "rgba(126,34,206,0.8)"
+                          : "transparent",
+                      color:
+                        video.platform === "tiktok"
+                          ? "#fda4af"
+                          : video.platform === "instagram"
+                          ? "#fcd34d"
+                          : video.isShort
+                          ? "#d8b4fe"
+                          : "transparent",
+                      display:
+                        !video.isShort && !isExternal ? "none" : undefined,
+                    }}
+                  >
+                    {video.platform === "tiktok"
+                      ? "TikTok"
+                      : video.platform === "instagram"
+                        ? "Reel"
+                        : "SHORT"}
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                    <Play className="h-10 w-10 text-zinc-100" fill="currentColor" />
-                  </div>
+                  {video.duration && (
+                    <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[11px] text-zinc-300">
+                      {video.duration}
+                    </div>
+                  )}
+                  {!isExternal && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Play className="h-10 w-10 text-zinc-100" fill="currentColor" />
+                    </div>
+                  )}
                 </a>
 
                 <div className="flex flex-1 flex-col justify-between p-4">
                   <div className="space-y-2">
                     <a
-                      href={getVideoUrl(video.youtubeId)}
+                      href={videoHref}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-semibold text-zinc-100 transition-colors hover:text-zinc-50"
@@ -151,6 +193,15 @@ export default async function VideosPage({ searchParams }: Props) {
                     )}
                   </div>
                   <div className="mt-3 flex items-center gap-3 font-mono text-xs text-zinc-500">
+                    {isExternal && (
+                      <>
+                        {video.platform === "tiktok" ? (
+                          <Music2 className="h-3 w-3" />
+                        ) : (
+                          <Camera className="h-3 w-3" />
+                        )}
+                      </>
+                    )}
                     <time>{video.date}</time>
                     {video.duration && (
                       <>
