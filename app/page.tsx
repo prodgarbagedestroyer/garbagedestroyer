@@ -20,8 +20,7 @@ export default async function IndexPage() {
             garbagedestroyer
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-zinc-400">
-            Benchmarks, systems experiments, and public builds. Watch the
-            breakdown, then inspect the code.
+            garbagedestroyer — Benchmarks, systems experiments, and public builds. Watch the breakdown, then inspect the code.
           </p>
         </div>
 
