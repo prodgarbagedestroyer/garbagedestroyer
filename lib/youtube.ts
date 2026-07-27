@@ -136,6 +136,29 @@ function decodeXml(s: string): string {
     .replace(/&#39;/g, "'");
 }
 
+async function enrichShortStatus(
+  videos: YouTubeVideo[]
+): Promise<YouTubeVideo[]> {
+  const results = await Promise.all(
+    videos.map(async (video) => {
+      if (video.isShort) return video;
+      try {
+        const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${video.youtubeId}&format=json`;
+        const res = await fetch(oembedUrl, { next: { revalidate: 86400 } });
+        if (!res.ok) return video;
+        const data = await res.json();
+        const w = data.thumbnail_width ?? 0;
+        const h = data.thumbnail_height ?? 0;
+        if (h > w) {
+          return { ...video, isShort: true };
+        }
+      } catch {}
+      return video;
+    })
+  );
+  return results;
+}
+
 async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
   try {
     const res = await fetch(
@@ -147,7 +170,7 @@ async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
     const xml = await res.text();
     const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) ?? [];
 
-    return entries.map((entry) => {
+    const videos = entries.map((entry) => {
       const id = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1] ?? "";
       const title =
         decodeXml(
@@ -175,6 +198,8 @@ async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
         isShort: detectShort(title, 0),
       };
     });
+
+    return enrichShortStatus(videos);
   } catch {
     return null;
   }
