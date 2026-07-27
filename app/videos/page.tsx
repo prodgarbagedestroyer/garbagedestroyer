@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Play, ExternalLink, Music2, Camera } from "lucide-react";
+import { Play, ExternalLink, Music2, Camera, GitBranch } from "lucide-react";
 import {
   getAllVideos,
   getVideos,
@@ -189,6 +189,28 @@ export default async function VideosPage({ searchParams }: Props) {
                             {project!.frontmatter.title}
                           </Link>
                         ))}
+                      </div>
+                    )}
+                    {video.relatedRepoUrls.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        <span className="font-mono text-[10px] uppercase text-zinc-600">
+                          Repos:
+                        </span>
+                        {video.relatedRepoUrls.map((url) => {
+                          const name = url.split("/").pop() ?? url;
+                          return (
+                            <a
+                              key={url}
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded border border-zinc-700 px-1.5 py-0 font-mono text-[11px] text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-300"
+                            >
+                              <GitBranch className="h-3 w-3" />
+                              {name}
+                            </a>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

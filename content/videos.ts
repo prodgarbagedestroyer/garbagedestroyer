@@ -17,6 +17,7 @@ export interface Video {
   isShort: boolean;
   platform: VideoPlatform;
   externalUrl?: string;
+  relatedRepoUrls: string[];
 }
 
 export function getVideoUrl(youtubeId: string): string {
@@ -52,6 +53,7 @@ const staticVideos: Video[] = [
     featured: true,
     isShort: false,
     platform: "youtube",
+    relatedRepoUrls: [],
   },
   {
     id: "zig-cli-rewrite",
@@ -65,6 +67,7 @@ const staticVideos: Video[] = [
     featured: false,
     isShort: false,
     platform: "youtube",
+    relatedRepoUrls: [],
   },
   {
     id: "runtime-showdown-2026",
@@ -78,6 +81,7 @@ const staticVideos: Video[] = [
     featured: true,
     isShort: false,
     platform: "youtube",
+    relatedRepoUrls: [],
   },
   {
     id: "wasm-on-the-edge",
@@ -91,6 +95,7 @@ const staticVideos: Video[] = [
     featured: false,
     isShort: false,
     platform: "youtube",
+    relatedRepoUrls: ["https://github.com/prodgarbagedestroyer/wasi-runtime-rs"],
   },
   {
     id: "jit-compiler-rust",
@@ -104,6 +109,7 @@ const staticVideos: Video[] = [
     featured: true,
     isShort: false,
     platform: "youtube",
+    relatedRepoUrls: ["https://github.com/prodgarbagedestroyer/jit-compiler-cranelift"],
   },
 ];
 
@@ -128,6 +134,7 @@ async function loadMergedVideos(): Promise<Video[]> {
       thumbnail: lv.thumbnail,
       isShort: lv.isShort,
       platform: "youtube" as VideoPlatform,
+      relatedRepoUrls: match?.relatedRepoUrls ?? [],
     };
   });
 }
@@ -171,6 +178,7 @@ export async function getVideos({
         isShort: true,
         platform: es.platform,
         externalUrl: es.url,
+        relatedRepoUrls: [],
       })
     );
     filtered = [...ytShorts, ...external].sort(

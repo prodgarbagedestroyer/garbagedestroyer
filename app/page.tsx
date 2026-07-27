@@ -1,7 +1,8 @@
-import { Film, GitBranch, ExternalLink, ArrowRight, Play } from "lucide-react";
+import { Film, GitBranch, ExternalLink, ArrowRight, Play, Star, GitFork } from "lucide-react";
 import Link from "next/link";
 import { getAllVideos, getVideoUrl, getVideoThumbnail, getChannelUrl } from "@/content/videos";
 import { getFeaturedProjects } from "@/lib/mdx";
+import { getOrgRepos } from "@/lib/github";
 import { ORG_URLS } from "@/content/site";
 import { verifiedLinks } from "@/content/links";
 
@@ -9,6 +10,7 @@ export default async function IndexPage() {
   const allVideos = await getAllVideos();
   const latestVideo = allVideos[0];
   const featuredProjects = getFeaturedProjects().slice(0, 4);
+  const repos = await getOrgRepos();
 
   return (
     <div className="space-y-14">
@@ -146,6 +148,71 @@ export default async function IndexPage() {
                   )}
                 </div>
               </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {repos.length > 0 && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-mono text-xs uppercase tracking-wider text-zinc-500">
+              Public Repos
+            </h2>
+            <a
+              href={ORG_URLS.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+            >
+              View all on GitHub →
+            </a>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {repos.slice(0, 6).map((repo) => (
+              <a
+                key={repo.name}
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex flex-col rounded-lg border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-zinc-700"
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <GitBranch className="h-3.5 w-3.5 text-zinc-500" />
+                  <span className="text-sm font-medium text-zinc-200 group-hover:text-zinc-100">
+                    {repo.name}
+                  </span>
+                  {repo.isArchived && (
+                    <span className="rounded border border-zinc-700 px-1.5 py-0 font-mono text-[10px] text-zinc-600">
+                      archived
+                    </span>
+                  )}
+                </div>
+                <p className="mb-3 text-xs leading-relaxed text-zinc-500 line-clamp-2">
+                  {repo.description || "No description"}
+                </p>
+                <div className="mt-auto flex items-center gap-4 font-mono text-[11px] text-zinc-600">
+                  {repo.language && (
+                    <span>
+                      <span className="mr-1 inline-block h-2 w-2 rounded-full bg-zinc-500 align-middle" />
+                      {repo.language}
+                    </span>
+                  )}
+                  {repo.stars > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      <Star className="h-3 w-3" />
+                      {repo.stars}
+                    </span>
+                  )}
+                  {repo.forks > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      <GitFork className="h-3 w-3" />
+                      {repo.forks}
+                    </span>
+                  )}
+                  <span>{repo.updatedAt}</span>
+                </div>
+              </a>
             ))}
           </div>
         </section>
