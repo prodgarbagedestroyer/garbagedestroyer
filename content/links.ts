@@ -17,17 +17,19 @@ export const verifiedLinks: SocialLink[] = [
     url: ORG_URLS.github,
     description: "Public projects and experiments.",
   },
-];
-
-export const unverifiedLinks: SocialLink[] = [
   {
-    label: "Twitter / X",
-    url: "https://x.com/prodgarbagedestroyer",
-    description: "Quick takes on systems programming and dev tooling.",
+    label: "Instagram",
+    url: ORG_URLS.instagram,
+    description: "Behind the scenes and project previews.",
   },
   {
-    label: "Email",
-    url: "mailto:prod@garbagedestroyer.com",
-    description: "Collaborations and inquiries.",
+    label: "TikTok",
+    url: ORG_URLS.tiktok,
+    description: "Short-form coding clips and tech takes.",
+  },
+  {
+    label: "Facebook",
+    url: ORG_URLS.facebook,
+    description: "Updates and community announcements.",
   },
 ];

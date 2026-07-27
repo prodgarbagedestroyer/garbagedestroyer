@@ -7,6 +7,9 @@ export const SITE = {
 } as const;
 
 export const ORG_URLS = {
-  youtube: `https://youtube.com/${SITE.youtubeHandle}`,
+  youtube: "http://www.youtube.com/@prod.garbagedestroyer",
   github: `https://github.com/${SITE.githubOrg}`,
+  instagram: "https://instagram.com/prod.garbagedestroyer",
+  tiktok: "https://tiktok.com/@prodgarbagedestroyer",
+  facebook: "https://www.facebook.com/profile.php?id=61591399319649",
 } as const;
