@@ -1,0 +1,27 @@
+---
+title: "go-map-vs-redis-latency"
+description: "Go sync.Map vs Redis latency comparison — when does an in-process cache beat a network round trip?"
+tags: ["go", "redis", "latency", "benchmark", "caching"]
+date: "2026-04-15"
+repo: "https://github.com/prod-garbage-destroyer/go-map-vs-redis-latency"
+language: "Python"
+featured: false
+status: "active"
+org: "prod-garbage-destroyer"
+sortOrder: 14
+---
+
+## Overview
+
+Measures the crossover point where an in-process Go sync.Map becomes faster than a local Redis instance. Tests variable payload sizes and concurrency levels to identify the latency tradeoff.
+
+## Methodology
+
+- **Local Redis**: Same host, Unix socket
+- **Go sync.Map**: In-process with RWMutex
+- **Payloads**: 64B, 1KB, 64KB
+- **Concurrency**: 1–1K goroutines
+
+## Key Finding
+
+For payloads under 1KB, sync.Map wins up to ~100 goroutines. Beyond that, Redis offers better tail latency due to connection pooling. The crossover moves with payload size.

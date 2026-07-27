@@ -47,92 +47,150 @@ interface VideoMeta {
 }
 
 const videoMetaMap: Record<string, VideoMeta> = {
-  UsylH6JQEdU: {
-    relatedProjectSlugs: ["docker-size-race-benchmark-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
-    ],
-  },
-  dwSQRBjY0xY: {
-    relatedProjectSlugs: ["throughput-race-benchmark-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-    ],
-  },
-  U8nmIIHhirY: {
-    relatedProjectSlugs: ["throughput-race-benchmark-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-    ],
-  },
-  aByiIjyqKDg: {
-    relatedProjectSlugs: ["go-rust-node-rest-api-benchmark-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
-    ],
-  },
-  v86pZnjuyPc: {
-    relatedProjectSlugs: ["go-rust-node-rest-api-benchmark-2026"],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
-    ],
-  },
-  k9721039r30: {
+  F9qRoa2bjPc: {
     relatedProjectSlugs: ["alpine-rust-vs-optimized-java-2026"],
-    featured: false,
+    featured: true,
     relatedRepoUrls: [
       "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
     ],
   },
-  F9qRoa2bjPc: {
-    relatedProjectSlugs: [],
-    featured: true,
-    relatedRepoUrls: [],
-  },
   y0BmPPAZRuA: {
-    relatedProjectSlugs: [],
+    relatedProjectSlugs: [
+      "alpine-rust-vs-optimized-java-2026",
+      "cold-start-tax-experiment",
+    ],
     featured: true,
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
+      "https://github.com/prod-garbage-destroyer/cold-start-tax-experiment",
+    ],
   },
   V0BGOxuygBM: {
-    relatedProjectSlugs: [],
-    featured: false,
-    relatedRepoUrls: [],
-  },
-  "hiFi-BJYm5s": {
-    relatedProjectSlugs: [],
-    featured: false,
-    relatedRepoUrls: [],
-  },
-  tm0qDQ45qpQ: {
-    relatedProjectSlugs: [],
-    featured: false,
-    relatedRepoUrls: [],
+    relatedProjectSlugs: ["build-time-race-benchmark-2026"],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
+    ],
   },
   eJ0Szrbzzes: {
-    relatedProjectSlugs: [],
+    relatedProjectSlugs: [
+      "go-rust-node-rest-api-benchmark-2026",
+      "throughput-race-benchmark-2026",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+    ],
+  },
+  "hiFi-BJYm5s": {
+    relatedProjectSlugs: ["kafka-rabbitmq-mqtt-2026"],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prod-garbage-destroyer/kafka-rabbitmq-mqtt-2026",
+    ],
+  },
+  tm0qDQ45qpQ: {
+    relatedProjectSlugs: ["build-time-race-benchmark-2026"],
     featured: false,
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
+    ],
   },
   "oLD-6lQ6IrU": {
-    relatedProjectSlugs: [],
+    relatedProjectSlugs: [
+      "build-time-race-benchmark-2026",
+      "docker-size-race-benchmark-2026",
+    ],
     featured: false,
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
+    ],
   },
   nui7WZrzogk: {
-    relatedProjectSlugs: [],
+    relatedProjectSlugs: ["go-map-vs-redis-latency"],
     featured: false,
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prod-garbage-destroyer/go-map-vs-redis-latency",
+    ],
+  },
+  aByiIjyqKDg: {
+    relatedProjectSlugs: [
+      "go-rust-node-rest-api-benchmark-2026",
+      "throughput-race-benchmark-2026",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+    ],
+  },
+  v86pZnjuyPc: {
+    relatedProjectSlugs: [
+      "go-rust-node-rest-api-benchmark-2026",
+      "rest-api-benchmark-2026-experiment-runner",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
+      "https://github.com/prod-garbage-destroyer/rest-api-benchmark-2026-experiment-runner",
+    ],
+  },
+  U8nmIIHhirY: {
+    relatedProjectSlugs: [
+      "throughput-race-benchmark-2026",
+      "memory-race-benchmark-2026",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/memory-race-benchmark-2026",
+    ],
+  },
+  dwSQRBjY0xY: {
+    relatedProjectSlugs: [
+      "throughput-race-benchmark-2026",
+      "memory-race-benchmark-2026",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/memory-race-benchmark-2026",
+    ],
   },
   pTJcAafZTLo: {
-    relatedProjectSlugs: [],
+    relatedProjectSlugs: [
+      "alpine-rust-vs-optimized-java-2026",
+      "rust-go-dotnet-microservice-2026",
+    ],
     featured: false,
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
+      "https://github.com/prod-garbage-destroyer/rust-go-dotnet-microservice-2026",
+    ],
+  },
+  k9721039r30: {
+    relatedProjectSlugs: [
+      "alpine-rust-vs-optimized-java-2026",
+      "rust-go-dotnet-microservice-2026",
+    ],
+    featured: false,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
+      "https://github.com/prod-garbage-destroyer/rust-go-dotnet-microservice-2026",
+    ],
+  },
+  UsylH6JQEdU: {
+    relatedProjectSlugs: [
+      "docker-size-race-benchmark-2026",
+      "cold-start-race-benchmark-2026",
+    ],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
+      "https://github.com/prodgarbagedestroyer/cold-start-race-benchmark-2026",
+    ],
   },
 };
 

@@ -1,0 +1,32 @@
+---
+title: "protobuf-http3-experiment-runner"
+description: "Protocol Buffers over HTTP/3 experiment runner — benchmarks gRPC, Connect, and REST+Protobuf over QUIC."
+tags: ["go", "protobuf", "http3", "grpc", "benchmark"]
+date: "2026-04-10"
+repo: "https://github.com/prod-garbage-destroyer/protobuf-http3-experiment-runner"
+language: "Go"
+featured: false
+status: "experimental"
+org: "prod-garbage-destroyer"
+sortOrder: 15
+---
+
+## Overview
+
+Compares Protocol Buffer serialization across three transport strategies: native gRPC, Connect (gRPC-compatible over HTTP), and REST+Protobuf over HTTP/3 (QUIC). Measures serialization overhead and transport latency.
+
+## Comparison
+
+| Transport | Protocol | Multiplexing |
+|---|---|---|
+| gRPC | HTTP/2 | Native streams |
+| Connect | HTTP/1.1 or H2 | Per-request |
+| REST+Protobuf over QUIC | HTTP/3 | QUIC streams |
+
+## Results (1KB protobuf, 1K requests)
+
+| Transport | RPS | p99 |
+|---|---|---|
+| gRPC-H2 | 78K | 2.1ms |
+| Connect-H2 | 62K | 2.8ms |
+| Protobuf-QUIC | 54K | 3.5ms |
