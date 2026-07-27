@@ -3,7 +3,7 @@ export const SITE = {
   handle: "@prod.garbagedestroyer",
   githubUser: "prodgarbagedestroyer",
   youtubeHandle: "@prod.garbagedestroyer",
-  domain: "garbagedestroyer.com",
+  domain: "prod.garbagedestroyer.com",
 } as const;
 
 export const ORG_URLS = {

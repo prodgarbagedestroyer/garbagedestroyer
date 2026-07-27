@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   description:
     "Benchmarks, systems experiments, and public builds from prod.garbagedestroyer. Watch the breakdown, then inspect the code.",
-  metadataBase: new URL("https://garbagedestroyer.com"),
+  metadataBase: new URL("https://prod.garbagedestroyer.com"),
   openGraph: {
     title: "garbagedestroyer",
     description:

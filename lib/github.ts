@@ -27,7 +27,7 @@ async function fetchRepos(
   const token = process.env.GITHUB_TOKEN;
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "garbagedestroyer.com/1.0",
+    "User-Agent": "prod.garbagedestroyer.com/1.0",
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
