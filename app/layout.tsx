@@ -17,14 +17,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "garbagedestroyer",
-    template: "%s — garbagedestroyer",
+    default: "prod.garbagedestroyer",
+    template: "%s — prod.garbagedestroyer",
   },
   description:
     "garbagedestroyer — Benchmarks, systems experiments, and public builds. Watch the breakdown, then inspect the code.",
   metadataBase: new URL("https://prod.garbagedestroyer.com"),
   openGraph: {
-    title: "garbagedestroyer",
+    title: "prod.garbagedestroyer",
     description:
       "garbagedestroyer — Benchmarks, systems experiments, and public builds. YouTube deep-dives paired with open-source repos.",
     type: "website",

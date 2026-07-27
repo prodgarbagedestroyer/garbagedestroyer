@@ -17,7 +17,7 @@ export default async function IndexPage() {
       <section className="space-y-6">
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-zinc-100 md:text-4xl">
-            garbagedestroyer
+            prod.garbagedestroyer
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-zinc-400">
             garbagedestroyer — Benchmarks, systems experiments, and public builds. Watch the breakdown, then inspect the code.
