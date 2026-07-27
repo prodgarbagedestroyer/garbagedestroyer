@@ -175,6 +175,13 @@ export default async function VideosPage({ searchParams }: Props) {
                     <p className="text-sm leading-relaxed text-zinc-400 line-clamp-2">
                       {video.description}
                     </p>
+                    {video.syncStatus === "standalone" && (
+                      <div className="pt-1">
+                        <span className="rounded border border-amber-900/70 bg-amber-950/40 px-1.5 py-0 font-mono text-[10px] uppercase tracking-wide text-amber-300/80">
+                          Standalone commentary
+                        </span>
+                      </div>
+                    )}
                     {relatedProjects.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 pt-1">
                         <span className="font-mono text-[10px] uppercase text-zinc-600">

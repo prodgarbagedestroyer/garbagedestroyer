@@ -1,0 +1,44 @@
+---
+title: "quarkus-vs-spring-boot-build-battle"
+description: "Quarkus vs Spring Boot build battle: startup time, packaging cost, memory footprint, and developer loop tradeoffs across JVM and native paths."
+tags: ["java", "quarkus", "spring-boot", "benchmark", "cold-start", "build-time"]
+date: "2026-07-27"
+repo: "https://github.com/prodgarbagedestroyer/quarkus-vs-spring-boot-build-battle"
+videoIds: ["F9qRoa2bjPc", "y0BmPPAZRuA"]
+language: "Java"
+featured: true
+status: "active"
+sortOrder: 0
+---
+
+## Overview
+
+Head-to-head Java framework comparison built around the same small order API in Spring Boot and Quarkus. The project is structured to support a real source-level comparison instead of a slide-only claim.
+
+## Comparison Focus
+
+- Startup time on the JVM
+- Native-image cold-start advantage
+- Packaging/build-time cost
+- Memory footprint
+- Developer feedback loop during local iteration
+
+## Project Layout
+
+```text
+quarkus-vs-spring-boot-build-battle/
+├── api/openapi.yaml
+├── infra/docker-compose.yml
+├── spring-app/
+└── quarkus-app/
+```
+
+## Key Angle
+
+Spring Boot wins on familiarity and broad ecosystem comfort. Quarkus wins on runtime density and native-image deployment profiles, but it charges more build complexity when you push into native mode.
+
+## Repo
+
+The full source tree is public here:
+
+- [prodgarbagedestroyer/quarkus-vs-spring-boot-build-battle](https://github.com/prodgarbagedestroyer/quarkus-vs-spring-boot-build-battle)

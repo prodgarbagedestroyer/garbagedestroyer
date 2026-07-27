@@ -12,6 +12,7 @@ export interface ProjectFrontmatter {
   status: ProjectStatus;
   org: string;
   videoId?: string;
+  videoIds?: string[];
   videoUrl?: string;
   sortOrder?: number;
   coverImage?: string;

@@ -1,8 +1,11 @@
 import { ORG_URLS } from "./site";
 import { fetchYouTubeVideos } from "@/lib/youtube";
-import { getAllExternalShorts, type ExternalShort } from "./external-shorts";
+import { getAllExternalShorts } from "./external-shorts";
+import { getAllProjects } from "@/lib/mdx";
+import videoSync from "./video-sync.json";
 
 export type VideoPlatform = "youtube" | "tiktok" | "instagram";
+export type VideoSyncStatus = "project" | "standalone" | "unmapped";
 
 export interface Video {
   id: string;
@@ -18,6 +21,7 @@ export interface Video {
   platform: VideoPlatform;
   externalUrl?: string;
   relatedRepoUrls: string[];
+  syncStatus: VideoSyncStatus;
 }
 
 export function getVideoUrl(youtubeId: string): string {
@@ -43,156 +47,73 @@ export function getChannelUrl(): string {
 interface VideoMeta {
   relatedProjectSlugs: string[];
   featured: boolean;
-  relatedRepoUrls: string[];
+  relatedRepoUrls?: string[];
+  syncStatus: VideoSyncStatus;
 }
 
-const videoMetaMap: Record<string, VideoMeta> = {
-  F9qRoa2bjPc: {
-    relatedProjectSlugs: ["alpine-rust-vs-optimized-java-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
-    ],
-  },
-  y0BmPPAZRuA: {
-    relatedProjectSlugs: [
-      "alpine-rust-vs-optimized-java-2026",
-      "cold-start-tax-experiment",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
-      "https://github.com/prod-garbage-destroyer/cold-start-tax-experiment",
-    ],
-  },
-  V0BGOxuygBM: {
-    relatedProjectSlugs: ["build-time-race-benchmark-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
-    ],
-  },
-  eJ0Szrbzzes: {
-    relatedProjectSlugs: [
-      "go-rust-node-rest-api-benchmark-2026",
-      "throughput-race-benchmark-2026",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-    ],
-  },
-  "hiFi-BJYm5s": {
-    relatedProjectSlugs: ["kafka-rabbitmq-mqtt-2026"],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prod-garbage-destroyer/kafka-rabbitmq-mqtt-2026",
-    ],
-  },
-  tm0qDQ45qpQ: {
-    relatedProjectSlugs: ["build-time-race-benchmark-2026"],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
-    ],
-  },
-  "oLD-6lQ6IrU": {
-    relatedProjectSlugs: [
-      "build-time-race-benchmark-2026",
-      "docker-size-race-benchmark-2026",
-    ],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/build-time-race-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
-    ],
-  },
-  nui7WZrzogk: {
-    relatedProjectSlugs: ["go-map-vs-redis-latency"],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prod-garbage-destroyer/go-map-vs-redis-latency",
-    ],
-  },
-  aByiIjyqKDg: {
-    relatedProjectSlugs: [
-      "go-rust-node-rest-api-benchmark-2026",
-      "throughput-race-benchmark-2026",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-    ],
-  },
-  v86pZnjuyPc: {
-    relatedProjectSlugs: [
-      "go-rust-node-rest-api-benchmark-2026",
-      "rest-api-benchmark-2026-experiment-runner",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
-      "https://github.com/prod-garbage-destroyer/rest-api-benchmark-2026-experiment-runner",
-    ],
-  },
-  U8nmIIHhirY: {
-    relatedProjectSlugs: [
-      "throughput-race-benchmark-2026",
-      "memory-race-benchmark-2026",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/memory-race-benchmark-2026",
-    ],
-  },
-  dwSQRBjY0xY: {
-    relatedProjectSlugs: [
-      "throughput-race-benchmark-2026",
-      "memory-race-benchmark-2026",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/memory-race-benchmark-2026",
-    ],
-  },
-  pTJcAafZTLo: {
-    relatedProjectSlugs: [
-      "alpine-rust-vs-optimized-java-2026",
-      "rust-go-dotnet-microservice-2026",
-    ],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
-      "https://github.com/prod-garbage-destroyer/rust-go-dotnet-microservice-2026",
-    ],
-  },
-  k9721039r30: {
-    relatedProjectSlugs: [
-      "alpine-rust-vs-optimized-java-2026",
-      "rust-go-dotnet-microservice-2026",
-    ],
-    featured: false,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
-      "https://github.com/prod-garbage-destroyer/rust-go-dotnet-microservice-2026",
-    ],
-  },
-  UsylH6JQEdU: {
-    relatedProjectSlugs: [
-      "docker-size-race-benchmark-2026",
-      "cold-start-race-benchmark-2026",
-    ],
-    featured: true,
-    relatedRepoUrls: [
-      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
-      "https://github.com/prodgarbagedestroyer/cold-start-race-benchmark-2026",
-    ],
-  },
+type VideoOverride = {
+  featured?: boolean;
+  mapping?: "standalone";
 };
+
+const videoOverrides = videoSync as Record<string, VideoOverride>;
+
+function unique(values: string[]): string[] {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function buildProjectVideoIndex(): Map<string, VideoMeta> {
+  const index = new Map<string, VideoMeta>();
+
+  for (const project of getAllProjects()) {
+    const videoIds = project.frontmatter.videoIds ?? [];
+    if (videoIds.length === 0) continue;
+
+    for (const videoId of videoIds) {
+      const current = index.get(videoId) ?? {
+        relatedProjectSlugs: [],
+        relatedRepoUrls: [],
+        featured: false,
+        syncStatus: "project" as const,
+      };
+
+      current.relatedProjectSlugs = unique([
+        ...current.relatedProjectSlugs,
+        project.slug,
+      ]);
+      current.relatedRepoUrls = unique([
+        ...(current.relatedRepoUrls ?? []),
+        project.frontmatter.repo ?? "",
+      ]);
+      current.featured = current.featured || project.frontmatter.featured;
+
+      index.set(videoId, current);
+    }
+  }
+
+  return index;
+}
+
+function mergeVideoMeta(projectMeta?: VideoMeta, overrideMeta?: VideoOverride): VideoMeta {
+  const relatedProjectSlugs = unique([
+    ...(projectMeta?.relatedProjectSlugs ?? []),
+  ]);
+  const syncStatus: VideoSyncStatus =
+    relatedProjectSlugs.length > 0
+      ? "project"
+      : overrideMeta?.mapping === "standalone"
+        ? "standalone"
+        : "unmapped";
+
+  return {
+    relatedProjectSlugs,
+    relatedRepoUrls: unique([
+      ...(projectMeta?.relatedRepoUrls ?? []),
+    ]),
+    featured: overrideMeta?.featured ?? projectMeta?.featured ?? false,
+    syncStatus,
+  };
+}
 
 const fallbackVideos: Video[] = [
   {
@@ -208,6 +129,7 @@ const fallbackVideos: Video[] = [
     isShort: false,
     platform: "youtube",
     relatedRepoUrls: [],
+    syncStatus: "standalone",
   },
 ];
 
@@ -218,12 +140,13 @@ async function loadMergedVideos(): Promise<Video[]> {
     return fallbackVideos;
   }
 
+  const projectVideoIndex = buildProjectVideoIndex();
+
   return live.map((lv) => {
-    const meta = videoMetaMap[lv.youtubeId] ?? {
-      relatedProjectSlugs: [],
-      featured: false,
-      relatedRepoUrls: [],
-    };
+    const projectMeta = projectVideoIndex.get(lv.youtubeId);
+    const overrideMeta = videoOverrides[lv.youtubeId];
+    const meta = mergeVideoMeta(projectMeta, overrideMeta);
+
     return {
       id: lv.id,
       title: lv.title,
@@ -236,7 +159,8 @@ async function loadMergedVideos(): Promise<Video[]> {
       thumbnail: lv.thumbnail,
       isShort: lv.isShort,
       platform: "youtube" as VideoPlatform,
-      relatedRepoUrls: meta.relatedRepoUrls,
+      relatedRepoUrls: meta.relatedRepoUrls ?? [],
+      syncStatus: meta.syncStatus,
     };
   });
 }
@@ -281,6 +205,7 @@ export async function getVideos({
         platform: es.platform,
         externalUrl: es.url,
         relatedRepoUrls: [],
+        syncStatus: "standalone",
       })
     );
     filtered = [...ytShorts, ...external].sort(

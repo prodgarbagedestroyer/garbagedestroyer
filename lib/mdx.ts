@@ -42,6 +42,11 @@ export function getProjectBySlug(slug: string): Project | null {
         status: data.status ?? "active",
         org: data.org ?? "prodgarbagedestroyer",
         videoId: data.videoId,
+        videoIds: Array.isArray(data.videoIds)
+          ? data.videoIds.filter((value: unknown): value is string => typeof value === "string")
+          : data.videoId
+            ? [data.videoId]
+            : [],
         videoUrl: data.videoUrl,
         sortOrder: data.sortOrder,
         coverImage: data.coverImage,

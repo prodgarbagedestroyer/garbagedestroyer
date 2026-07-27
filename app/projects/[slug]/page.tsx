@@ -25,10 +25,11 @@ export default async function ProjectPage({ params }: Props) {
 
   const content = await compileMdx(project.raw);
   const relatedVideos = await getVideosByProject(slug);
+  const primaryVideoId = project.frontmatter.videoId ?? project.frontmatter.videoIds?.[0];
   const videoUrl = project.frontmatter.videoUrl
     ? project.frontmatter.videoUrl
-    : project.frontmatter.videoId
-      ? getVideoUrl(project.frontmatter.videoId)
+    : primaryVideoId
+      ? getVideoUrl(primaryVideoId)
       : null;
 
   return (
