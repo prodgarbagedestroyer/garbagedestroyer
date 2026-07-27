@@ -24,7 +24,7 @@ async function fetchOrgRepos(): Promise<GitHubRepo[] | null> {
   try {
     const res = await fetch(
       `https://api.github.com/orgs/${GITHUB_ORG}/repos?type=public&sort=updated&per_page=100`,
-      { headers, next: { revalidate: 3600 } }
+      { headers, next: { revalidate: 86400 } }
     );
     if (!res.ok) return null;
 

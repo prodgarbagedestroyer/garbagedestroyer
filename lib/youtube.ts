@@ -48,7 +48,7 @@ async function fetchViaDataAPI(): Promise<YouTubeVideo[] | null> {
   try {
     const channelRes = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${YOUTUBE_HANDLE}&key=${apiKey}`,
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 14400 } }
     );
     const channelJson = await channelRes.json();
     if (channelJson.error) return null;
@@ -100,7 +100,7 @@ async function fetchViaDataAPI(): Promise<YouTubeVideo[] | null> {
     for (const chunk of idChunks) {
       const vRes = await fetch(
         `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${chunk}&key=${apiKey}`,
-        { next: { revalidate: 3600 } }
+        { next: { revalidate: 14400 } }
       );
       const vJson = await vRes.json();
       if (!vJson.error) {
