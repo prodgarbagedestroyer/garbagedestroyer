@@ -40,74 +40,111 @@ export function getChannelUrl(): string {
   return ORG_URLS.youtube;
 }
 
-const staticVideos: Video[] = [
-  {
-    id: "rust-vs-go-http",
-    title: "Rust vs Go: HTTP Throughput at 100K Connections",
-    youtubeId: "placeholder-rust-go-http",
-    date: "2026-07-25",
-    duration: "18:24",
-    description:
-      "Benchmarking raw HTTP server throughput — comparing async Rust (Tokio) against Go goroutines under heavy load. Latency percentiles, memory overhead, and CPU saturation.",
-    relatedProjectSlugs: [],
+interface VideoMeta {
+  relatedProjectSlugs: string[];
+  featured: boolean;
+  relatedRepoUrls: string[];
+}
+
+const videoMetaMap: Record<string, VideoMeta> = {
+  UsylH6JQEdU: {
+    relatedProjectSlugs: ["docker-size-race-benchmark-2026"],
     featured: true,
-    isShort: false,
-    platform: "youtube",
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/docker-size-race-benchmark-2026",
+    ],
+  },
+  dwSQRBjY0xY: {
+    relatedProjectSlugs: ["throughput-race-benchmark-2026"],
+    featured: true,
     relatedRepoUrls: [
       "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+    ],
+  },
+  U8nmIIHhirY: {
+    relatedProjectSlugs: ["throughput-race-benchmark-2026"],
+    featured: true,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/throughput-race-benchmark-2026",
+    ],
+  },
+  aByiIjyqKDg: {
+    relatedProjectSlugs: ["go-rust-node-rest-api-benchmark-2026"],
+    featured: true,
+    relatedRepoUrls: [
       "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
     ],
   },
-  {
-    id: "zig-cli-rewrite",
-    title: "I Rewrote My CLI in Zig (and Regretted It)",
-    youtubeId: "placeholder-zig-cli",
-    date: "2026-07-15",
-    duration: "22:10",
-    description:
-      "A candid walkthrough of porting a 3K-line Rust CLI tool to Zig. Comptime metaprogramming, error handling patterns, and where each language excels.",
-    relatedProjectSlugs: [],
+  v86pZnjuyPc: {
+    relatedProjectSlugs: ["go-rust-node-rest-api-benchmark-2026"],
     featured: false,
-    isShort: false,
-    platform: "youtube",
-    relatedRepoUrls: [],
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/go-rust-node-rest-api-benchmark-2026",
+    ],
   },
-  {
-    id: "runtime-showdown-2026",
-    title: "Bun vs Deno vs Node: The 2026 Server-Side Runtime Showdown",
-    youtubeId: "placeholder-runtime-showdown",
-    date: "2026-07-05",
-    duration: "31:15",
-    description:
-      "Cold starts, throughput, memory footprint, and developer experience — a comprehensive look at where each server-side JavaScript runtime stands in mid-2026.",
+  k9721039r30: {
+    relatedProjectSlugs: ["alpine-rust-vs-optimized-java-2026"],
+    featured: false,
+    relatedRepoUrls: [
+      "https://github.com/prodgarbagedestroyer/alpine-rust-vs-optimized-java-2026",
+    ],
+  },
+  F9qRoa2bjPc: {
     relatedProjectSlugs: [],
     featured: true,
-    isShort: false,
-    platform: "youtube",
     relatedRepoUrls: [],
   },
-  {
-    id: "wasm-on-the-edge",
-    title: "WebAssembly on the Edge: Is It Ready?",
-    youtubeId: "placeholder-wasm-edge",
-    date: "2026-06-20",
-    duration: "25:42",
-    description:
-      "Deploying Wasm modules to Cloudflare Workers, Fastly Compute, and a custom AOT runtime. Latency benchmarks and real-world viability assessment.",
+  y0BmPPAZRuA: {
+    relatedProjectSlugs: [],
+    featured: true,
+    relatedRepoUrls: [],
+  },
+  V0BGOxuygBM: {
     relatedProjectSlugs: [],
     featured: false,
-    isShort: false,
-    platform: "youtube",
     relatedRepoUrls: [],
   },
+  "hiFi-BJYm5s": {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+  tm0qDQ45qpQ: {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+  eJ0Szrbzzes: {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+  "oLD-6lQ6IrU": {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+  nui7WZrzogk: {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+  pTJcAafZTLo: {
+    relatedProjectSlugs: [],
+    featured: false,
+    relatedRepoUrls: [],
+  },
+};
+
+const fallbackVideos: Video[] = [
   {
-    id: "jit-compiler-rust",
-    title: "Building a JIT Compiler in Rust (Step by Step)",
-    youtubeId: "placeholder-jit-compiler",
-    date: "2026-06-08",
-    duration: "45:30",
+    id: "fallback-1",
+    title: "Latest content coming soon — subscribe on YouTube",
+    youtubeId: "",
+    date: "",
+    duration: "",
     description:
-      "From lexer to native code — implementing a simple JIT compiler using Cranelift. Covers IR generation, register allocation, and emitting x86-64 machine code.",
+      "Videos are auto-synced from YouTube. Check back shortly or visit the channel directly.",
     relatedProjectSlugs: [],
     featured: true,
     isShort: false,
@@ -120,24 +157,28 @@ async function loadMergedVideos(): Promise<Video[]> {
   const live = await fetchYouTubeVideos();
 
   if (!live?.length) {
-    return staticVideos;
+    return fallbackVideos;
   }
 
   return live.map((lv) => {
-    const match = staticVideos.find((sv) => sv.youtubeId === lv.youtubeId);
+    const meta = videoMetaMap[lv.youtubeId] ?? {
+      relatedProjectSlugs: [],
+      featured: false,
+      relatedRepoUrls: [],
+    };
     return {
       id: lv.id,
       title: lv.title,
       youtubeId: lv.youtubeId,
       date: lv.date,
-      duration: lv.duration || match?.duration || "",
-      description: lv.description || match?.description || "",
-      relatedProjectSlugs: match?.relatedProjectSlugs ?? [],
-      featured: match?.featured ?? false,
+      duration: lv.duration || "",
+      description: lv.description || "",
+      relatedProjectSlugs: meta.relatedProjectSlugs,
+      featured: meta.featured,
       thumbnail: lv.thumbnail,
       isShort: lv.isShort,
       platform: "youtube" as VideoPlatform,
-      relatedRepoUrls: match?.relatedRepoUrls ?? [],
+      relatedRepoUrls: meta.relatedRepoUrls,
     };
   });
 }
