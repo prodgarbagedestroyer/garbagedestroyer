@@ -21,14 +21,14 @@ export const metadata: Metadata = {
     template: "%s — prod.garbagedestroyer",
   },
   description:
-    "garbagedestroyer — Benchmarks, systems experiments, and public builds. Watch the breakdown, then inspect the code.",
+    "Benchmarks, systems experiments, and public builds. Watch the breakdown, then inspect the code.",
   metadataBase: new URL("https://prod.garbagedestroyer.com"),
   openGraph: {
     title: "prod.garbagedestroyer",
     description:
-      "garbagedestroyer — Benchmarks, systems experiments, and public builds. YouTube deep-dives paired with open-source repos.",
+      "Benchmarks, systems experiments, and public builds. YouTube deep-dives paired with open-source repos.",
     type: "website",
-    siteName: "garbagedestroyer",
+    siteName: "prod.garbagedestroyer",
   },
 };
 
