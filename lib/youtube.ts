@@ -1,24 +1,44 @@
 const YOUTUBE_HANDLE = "prod.garbagedestroyer";
 const CHANNEL_ID = "UClC6vGvALsZPGA2KeIFR8uQ";
+const MAX_API_PAGES = 5;
+const PAGE_SIZE = 50;
 
-interface YouTubeVideo {
+export interface YouTubeVideo {
   id: string;
   title: string;
   youtubeId: string;
   date: string;
   duration: string;
+  durationSeconds: number;
   description: string;
   thumbnail: string;
+  isShort: boolean;
 }
 
-function parseDuration(iso: string): string {
+function parseDuration(
+  iso: string
+): { display: string; seconds: number } {
   const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!m) return "0:00";
+  if (!m) return { display: "0:00", seconds: 0 };
   const h = parseInt(m[1] ?? "0");
   const min = parseInt(m[2] ?? "0");
   const sec = parseInt(m[3] ?? "0");
-  if (h > 0) return `${h}:${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-  return `${min}:${String(sec).padStart(2, "0")}`;
+  const total = h * 3600 + min * 60 + sec;
+  if (h > 0)
+    return {
+      display: `${h}:${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`,
+      seconds: total,
+    };
+  return { display: `${min}:${String(sec).padStart(2, "0")}`, seconds: total };
+}
+
+function detectShort(
+  title: string,
+  durationSeconds: number
+): boolean {
+  if (/#shorts/i.test(title)) return true;
+  if (durationSeconds > 0 && durationSeconds <= 60) return true;
+  return false;
 }
 
 async function fetchViaDataAPI(): Promise<YouTubeVideo[] | null> {
@@ -37,52 +57,83 @@ async function fetchViaDataAPI(): Promise<YouTubeVideo[] | null> {
       channelJson.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     if (!uploadsId) return null;
 
-    const playlistRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&maxResults=20&playlistId=${uploadsId}&key=${apiKey}`,
-      { next: { revalidate: 3600 } }
-    );
-    const playlistJson = await playlistRes.json();
-    if (playlistJson.error) return null;
+    let allItems: {
+      contentDetails?: { videoId?: string };
+    }[] = [];
+    let pageToken: string | undefined;
 
-    const videoIds = playlistJson.items
-      ?.map(
-        (i: { contentDetails?: { videoId?: string } }) =>
-          i.contentDetails?.videoId
-      )
+    for (let page = 0; page < MAX_API_PAGES; page++) {
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=${PAGE_SIZE}&playlistId=${uploadsId}&key=${apiKey}${pageToken ? `&pageToken=${pageToken}` : ""}`;
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      const json = await res.json();
+      if (json.error) break;
+
+      allItems = allItems.concat(json.items ?? []);
+      pageToken = json.nextPageToken;
+      if (!pageToken) break;
+    }
+
+    const videoIds = allItems
+      .map((i) => i.contentDetails?.videoId)
       .filter(Boolean)
       .join(",");
     if (!videoIds) return null;
 
-    const videosRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoIds}&key=${apiKey}`,
-      { next: { revalidate: 3600 } }
-    );
-    const videosJson = await videosRes.json();
-    if (videosJson.error) return null;
+    const chunkSize = 50;
+    const idChunks: string[] = [];
+    const ids = videoIds.split(",");
+    for (let i = 0; i < ids.length; i += chunkSize) {
+      idChunks.push(ids.slice(i, i + chunkSize).join(","));
+    }
 
-    return (videosJson.items ?? []).map(
-      (item: {
-        id: string;
-        snippet: {
-          title: string;
-          description: string;
-          publishedAt: string;
-          thumbnails: { high: { url: string } };
-        };
-        contentDetails: { duration: string };
-      }) => ({
+    let allVideos: {
+      id: string;
+      snippet: {
+        title: string;
+        description: string;
+        publishedAt: string;
+        thumbnails: { high: { url: string } };
+      };
+      contentDetails: { duration: string };
+    }[] = [];
+
+    for (const chunk of idChunks) {
+      const vRes = await fetch(
+        `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${chunk}&key=${apiKey}`,
+        { next: { revalidate: 3600 } }
+      );
+      const vJson = await vRes.json();
+      if (!vJson.error) {
+        allVideos = allVideos.concat(vJson.items ?? []);
+      }
+    }
+
+    return allVideos.map((item) => {
+      const dur = parseDuration(item.contentDetails.duration);
+      return {
         id: item.id,
         title: item.snippet.title,
         youtubeId: item.id,
         date: item.snippet.publishedAt.slice(0, 10),
-        duration: parseDuration(item.contentDetails.duration),
+        duration: dur.display,
+        durationSeconds: dur.seconds,
         description: item.snippet.description.slice(0, 300),
         thumbnail: item.snippet.thumbnails.high.url,
-      })
-    );
+        isShort: detectShort(item.snippet.title, dur.seconds),
+      };
+    });
   } catch {
     return null;
   }
+}
+
+function decodeXml(s: string): string {
+  return s
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }
 
 async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
@@ -99,12 +150,9 @@ async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
     return entries.map((entry) => {
       const id = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1] ?? "";
       const title =
-        entry
-          .match(/<media:title>([^<]*)<\/media:title>/)?.[1]
-          ?.replace(/&amp;/g, "&")
-          .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">")
-          .replace(/&quot;/g, '"') ?? "";
+        decodeXml(
+          entry.match(/<media:title>([^<]*)<\/media:title>/)?.[1] ?? ""
+        );
       const published =
         entry
           .match(/<published>([^<]+)<\/published>/)?.[1]
@@ -115,7 +163,17 @@ async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
           ?.slice(0, 300) ?? "";
       const thumbnail = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
-      return { id: `yt-${id}`, title, youtubeId: id, date: published, duration: "", description: desc, thumbnail };
+      return {
+        id: `yt-${id}`,
+        title,
+        youtubeId: id,
+        date: published,
+        duration: "",
+        durationSeconds: 0,
+        description: desc,
+        thumbnail,
+        isShort: detectShort(title, 0),
+      };
     });
   } catch {
     return null;

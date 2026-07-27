@@ -11,6 +11,7 @@ export interface Video {
   relatedProjectSlugs: string[];
   featured: boolean;
   thumbnail?: string;
+  isShort: boolean;
 }
 
 export function getVideoUrl(youtubeId: string): string {
@@ -39,6 +40,7 @@ const staticVideos: Video[] = [
       "Benchmarking raw HTTP server throughput — comparing async Rust (Tokio) against Go goroutines under heavy load. Latency percentiles, memory overhead, and CPU saturation.",
     relatedProjectSlugs: [],
     featured: true,
+    isShort: false,
   },
   {
     id: "zig-cli-rewrite",
@@ -50,6 +52,7 @@ const staticVideos: Video[] = [
       "A candid walkthrough of porting a 3K-line Rust CLI tool to Zig. Comptime metaprogramming, error handling patterns, and where each language excels.",
     relatedProjectSlugs: [],
     featured: false,
+    isShort: false,
   },
   {
     id: "runtime-showdown-2026",
@@ -61,6 +64,7 @@ const staticVideos: Video[] = [
       "Cold starts, throughput, memory footprint, and developer experience — a comprehensive look at where each server-side JavaScript runtime stands in mid-2026.",
     relatedProjectSlugs: [],
     featured: true,
+    isShort: false,
   },
   {
     id: "wasm-on-the-edge",
@@ -72,6 +76,7 @@ const staticVideos: Video[] = [
       "Deploying Wasm modules to Cloudflare Workers, Fastly Compute, and a custom AOT runtime. Latency benchmarks and real-world viability assessment.",
     relatedProjectSlugs: ["wasi-runtime-rs"],
     featured: false,
+    isShort: false,
   },
   {
     id: "jit-compiler-rust",
@@ -83,6 +88,7 @@ const staticVideos: Video[] = [
       "From lexer to native code — implementing a simple JIT compiler using Cranelift. Covers IR generation, register allocation, and emitting x86-64 machine code.",
     relatedProjectSlugs: ["jit-compiler-cranelift"],
     featured: true,
+    isShort: false,
   },
 ];
 
@@ -105,6 +111,7 @@ async function loadMergedVideos(): Promise<Video[]> {
       relatedProjectSlugs: match?.relatedProjectSlugs ?? [],
       featured: match?.featured ?? false,
       thumbnail: lv.thumbnail,
+      isShort: lv.isShort,
     };
   });
 }
@@ -117,6 +124,33 @@ export async function getAllVideos(): Promise<Video[]> {
   return cachedVideos;
 }
 
+export async function getVideos({
+  type,
+  page = 1,
+  perPage = 12,
+}: {
+  type?: "video" | "short";
+  page?: number;
+  perPage?: number;
+} = {}): Promise<{ videos: Video[]; total: number; pages: number }> {
+  const all = await getAllVideos();
+
+  const filtered =
+    type === "video"
+      ? all.filter((v) => !v.isShort)
+      : type === "short"
+        ? all.filter((v) => v.isShort)
+        : all;
+
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  const safePage = Math.min(page, pages);
+  const start = (safePage - 1) * perPage;
+  const videos = filtered.slice(start, start + perPage);
+
+  return { videos, total, pages };
+}
+
 export async function getFeaturedVideo(): Promise<Video | undefined> {
   const all = await getAllVideos();
   return all.find((v) => v.featured);
@@ -125,4 +159,12 @@ export async function getFeaturedVideo(): Promise<Video | undefined> {
 export async function getVideosByProject(slug: string): Promise<Video[]> {
   const all = await getAllVideos();
   return all.filter((v) => v.relatedProjectSlugs.includes(slug));
+}
+
+export function getShortsCount(videos: Video[]): number {
+  return videos.filter((v) => v.isShort).length;
+}
+
+export function getVideosCount(videos: Video[]): number {
+  return videos.filter((v) => !v.isShort).length;
 }
