@@ -1,7 +1,10 @@
+import { readCache, writeCache } from "./cache";
+
 const YOUTUBE_HANDLE = "prod.garbagedestroyer";
 const CHANNEL_ID = "UClC6vGvALsZPGA2KeIFR8uQ";
 const MAX_API_PAGES = 5;
 const PAGE_SIZE = 50;
+const CACHE_KEY = "youtube-videos";
 
 export interface YouTubeVideo {
   id: string;
@@ -207,10 +210,17 @@ async function fetchViaRSS(): Promise<YouTubeVideo[] | null> {
 
 export async function fetchYouTubeVideos(): Promise<YouTubeVideo[] | null> {
   const fromAPI = await fetchViaDataAPI();
-  if (fromAPI?.length) return fromAPI;
+  if (fromAPI !== null) {
+    writeCache(CACHE_KEY, fromAPI);
+    return fromAPI;
+  }
 
   const fromRSS = await fetchViaRSS();
-  if (fromRSS?.length) return fromRSS;
+  if (fromRSS !== null) {
+    writeCache(CACHE_KEY, fromRSS);
+    return fromRSS;
+  }
 
-  return null;
+  const fromCache = readCache<YouTubeVideo[]>(CACHE_KEY);
+  return fromCache;
 }

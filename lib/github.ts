@@ -1,4 +1,7 @@
+import { readCache, writeCache } from "./cache";
+
 const GITHUB_ORG = "prodgarbagedestroyer";
+const CACHE_KEY = "github-repos";
 
 export interface GitHubRepo {
   name: string;
@@ -65,7 +68,15 @@ let cachedRepos: GitHubRepo[] | null = null;
 
 export async function getOrgRepos(): Promise<GitHubRepo[]> {
   if (cachedRepos) return cachedRepos;
+
   const live = await fetchOrgRepos();
-  cachedRepos = live ?? [];
+  if (live !== null) {
+    writeCache(CACHE_KEY, live);
+    cachedRepos = live;
+    return cachedRepos;
+  }
+
+  const fromCache = readCache<GitHubRepo[]>(CACHE_KEY);
+  cachedRepos = fromCache ?? [];
   return cachedRepos;
 }
